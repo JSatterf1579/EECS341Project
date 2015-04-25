@@ -22,6 +22,16 @@ public class PrescriptionUI {
 		});
 	}
 	
+	public PrescriptionUI(SQLConnection db) {
+		this.parent = null;
+		this.db = db;
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				launchDisplay();
+			}
+		});
+	}
+	
 	private void launchDisplay() {
 		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
@@ -96,21 +106,33 @@ public class PrescriptionUI {
 				}
 				unit = unitField.getText();
 				frequency = frequencyField.getText();
-				addPrescription(itemID, prescriberName, amount, unit, frequency);
-				frame.dispose();
-				//parent.addPerscription(perscriptionID);
+				int prescriptionID;
+				try {
+					prescriptionID = addPrescription(itemID, prescriberName, amount, unit, frequency);
+				} catch (SQLConnectionException e) {
+					new PopupUI(e.toString(), e.getMessage());
+					return;
+				} catch (SQLException e) {
+					new PopupUI(e.toString(), e.getMessage());
+					return;
+				} finally {
+					frame.dispose();
+				}
+				if (parent != null) {
+					parent.addPrescription(prescriptionID);
+				}
 			}
 		});
 	}
 	
-	void addPrescription(int itemID, String prescriberName, int amount, String unit, String frequency) {
-		try {
-			db.runQueryString("INSERT INTO Perscriptions (itemID, perscriberName, amountGiven, unit, fillingFrequency)"
-			                + "VALUES (" + itemID + ", " + prescriberName + ", " + amount + ", " + unit + ", " + frequency + ")");
-		} catch (SQLConnectionException e) {
-			new PopupUI(e.toString(), e.getMessage());
-		} catch (SQLException e) {
-			new PopupUI(e.toString(), e.getMessage());
+	int addPrescription(int itemID, String prescriberName, int amount, String unit, String frequency) throws SQLConnectionException, SQLException {
+		db.runUpdateString("INSERT INTO Prescription (itemID, prescriberName, amountGiven, unit, fillingFrequency)"
+				+ "VALUES (" + itemID + ", " + prescriberName + ", " + amount + ", " + unit + ", " + frequency + ")");
+		ResultSet rs = db.runQueryString("SELECT LAST_INSERT_ID()");
+		if (rs.next()) {
+			return Integer.parseInt(rs.getString(1));
+		} else {
+			throw new SQLException("The perscription added successfully, but there was a problem getting the automatically assigned ID");
 		}
 	}
 }

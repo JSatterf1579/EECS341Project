@@ -171,5 +171,9 @@ public class MakePurchaseUI {
 			new PopupUI(e.toString(), e.getMessage());
 		}
 	}
+	
+	public void addPrescription(int prescriptionID) {
+		//TODO
+	}
 
 }

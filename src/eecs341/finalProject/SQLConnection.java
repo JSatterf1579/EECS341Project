@@ -53,6 +53,16 @@ public class SQLConnection {
 		}
 	}
 	
+	public int runUpdateString(String queryString) throws SQLConnectionException, SQLException {
+		if (isInitialized) {
+			Statement stmt = conn.createStatement();
+			return stmt.executeUpdate(queryString);
+			
+		} else {
+			throw new SQLConnectionException("Cannot run query without establishing connection");
+		}
+	}
+	
 	public ResultSet runPreparedQuery(PreparedStatement stmt) throws SQLConnectionException, SQLException {
 		if (isInitialized) {
 			return stmt.executeQuery();
