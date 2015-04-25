@@ -1,14 +1,17 @@
 package eecs341.finalProject;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 
 public class DatabaseUI {
 	private JFrame frame;
+	private SQLConnection db;
 	
 	public DatabaseUI() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+				db = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.account, DBInfo.password, DBInfo.database);
 				launchDisplay();
 			}
 		});
@@ -19,7 +22,7 @@ public class DatabaseUI {
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("JMJ Database");
 		
-		// NEEDS TO PULL FROM DATABASE
+		
 		String[] stores = {"none", "Store 1", "Store 2", "Store 3", "Store 4"};
 		
 		JComboBox<String> dropDown = new JComboBox<String>(stores);

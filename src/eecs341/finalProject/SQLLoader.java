@@ -12,23 +12,11 @@ import jdk.nashorn.internal.objects.PrototypeObject;
 
 public class SQLLoader {
 	
-	
-	
 	public static void main(String[] args) {
-		
-		String projectServer = "ec2-52-4-49-69.compute-1.amazonaws.com";
-		
-		String port = "3306";
-		
-		String account = "projectAccount";
-		
-		String password = "V-P5astEgU";
-		
-		String database = "314_project";
 		
 		SQLConnection conn;
 		
-		conn = new SQLConnection(projectServer, port, database, account, password);
+		conn = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.account, DBInfo.password, DBInfo.database);
 		try {
 			conn.initializeConnection();
 		} catch (SQLConnectionException e1) {
