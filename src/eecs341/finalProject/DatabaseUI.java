@@ -88,7 +88,7 @@ public class DatabaseUI {
 		button3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				new PrescriptionUI();
+				//new PrescriptionUI(); TODO
 			}
 		});
 		
