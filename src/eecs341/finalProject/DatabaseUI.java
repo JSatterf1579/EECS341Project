@@ -41,7 +41,7 @@ public class DatabaseUI {
 	private void launchDisplay() throws SQLConnectionException, SQLException {
 		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
-		frame.setTitle("JMJ Database");
+		frame.setTitle("DOBIS Database");
 		
 		ResultSet rs = db.runQueryString("SELECT address FROM Stores");
 		String[] stores = resultSetCol(rs, 1);
@@ -50,7 +50,7 @@ public class DatabaseUI {
 		JButton button1 = new JButton("Control Stock");
 		JButton button2 = new JButton("Make Purchase");
 		JButton button3 = new JButton("Make Prescription");
-		JButton button4 = new JButton("Make JMJ Member");
+		JButton button4 = new JButton("Make Dobis Member");
 		JButton button5 = new JButton("Analytics");
 		
 		dropDown.setBounds(50, 5, 200, 50);
@@ -69,6 +69,7 @@ public class DatabaseUI {
 		frame.setSize(300, 400);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
+		frame.getContentPane().setBackground(Color.white);
 		frame.setVisible(true);
 		
 		button1.addActionListener(new ActionListener() {
@@ -81,6 +82,20 @@ public class DatabaseUI {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
 				new MakePurchaseUI();
+			}
+		});
+		
+		button3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				new PrescriptionUI();
+			}
+		});
+		
+		button4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				new MakeMemberUI();
 			}
 		});
 	}
