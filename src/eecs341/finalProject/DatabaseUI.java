@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class DatabaseUI {
 	private JFrame frame;
-	private SQLConnection db;
+	protected SQLConnection db;
 	
 	private String[] resultSetCol(ResultSet rs, int col) throws SQLException {
 		ArrayList<String> result = new ArrayList<String>();
@@ -23,9 +23,19 @@ public class DatabaseUI {
 	public DatabaseUI() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				db = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.database, DBInfo.account, DBInfo.password);
+//				db = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.database, DBInfo.account, DBInfo.password);
+//				try {
+//					db.initializeConnection();
+//					launchDisplay();
+//				} catch (SQLConnectionException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (SQLException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 				try {
-					db.initializeConnection();
+					db = Dobis.db;
 					launchDisplay();
 				} catch (SQLConnectionException e) {
 					// TODO Auto-generated catch block
@@ -41,7 +51,7 @@ public class DatabaseUI {
 	private void launchDisplay() throws SQLConnectionException, SQLException {
 		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
-		frame.setTitle("DOBIS Database");
+		frame.setTitle("Dobis Database");
 		
 		ResultSet rs = db.runQueryString("SELECT address FROM Stores");
 		String[] stores = resultSetCol(rs, 1);
@@ -81,14 +91,14 @@ public class DatabaseUI {
 		button2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				new MakePurchaseUI();
+				new MakePurchaseUI(DatabaseUI.this);
 			}
 		});
 		
 		button3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				new PrescriptionUI();
+				//new PrescriptionUI(); TODO
 			}
 		});
 		
@@ -96,6 +106,13 @@ public class DatabaseUI {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
 				new MakeMemberUI();
+			}
+		});
+		
+		button5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				new AnalyticsUI();
 			}
 		});
 	}

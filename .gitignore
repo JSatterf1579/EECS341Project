@@ -37,3 +37,6 @@ local.properties
 
 # mac stuff
 .DS_Store
+
+# log files
+*.log
