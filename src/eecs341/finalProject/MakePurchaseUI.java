@@ -1,4 +1,5 @@
 package eecs341.finalProject;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -51,6 +52,7 @@ public class MakePurchaseUI {
 		checkout.setBounds(200, 320, 90, 50);
 		
 		itemList.setFont(new Font("monospaced", Font.PLAIN, 12));
+		itemList.setBorder(BorderFactory.createLineBorder(Color.black));
 		
 		itemlabel.setEditable(false);
 		
@@ -65,6 +67,7 @@ public class MakePurchaseUI {
 		frame.setSize(300, 400);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
+		frame.getContentPane().setBackground(Color.white);
 		frame.setVisible(true);
 		
 		addItem.addActionListener(new ActionListener() {
@@ -79,6 +82,13 @@ public class MakePurchaseUI {
 		removeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				itemListModel.remove(itemList.getSelectedIndex());
+			}
+		});
+		
+		addPrescription.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new PrescriptionUI(itemListModel);
+				frame.dispose();
 			}
 		});
 		

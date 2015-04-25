@@ -1,4 +1,5 @@
 package eecs341.finalProject;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -34,6 +35,7 @@ public class ControlStockUI {
 		frame.setSize(300, 400);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
+		frame.getContentPane().setBackground(Color.white);
 		frame.setVisible(true);
 		
 		button3.addActionListener(new ActionListener() {

@@ -71,6 +71,7 @@ public class DatabaseUI {
 		frame.setSize(300, 400);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
+		frame.getContentPane().setBackground(Color.white);
 		frame.setVisible(true);
 		
 		button1.addActionListener(new ActionListener() {

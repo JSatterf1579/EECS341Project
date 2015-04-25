@@ -1,4 +1,5 @@
 package eecs341.finalProject;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,6 +42,7 @@ public class CheckoutUI {
 		checkout.setBounds(200, 320, 90, 50);
 		
 		itemList.setFont(new Font("monospaced", Font.PLAIN, 12));
+		itemList.addListSelectionListener(null);
 		
 		memberLabel.setEditable(false);
 		
@@ -54,6 +56,7 @@ public class CheckoutUI {
 		frame.setSize(300, 400);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
+		frame.getContentPane().setBackground(Color.white);
 		frame.setVisible(true);
 		
 		addMember.addActionListener(new ActionListener() {
