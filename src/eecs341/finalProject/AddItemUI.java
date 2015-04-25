@@ -5,8 +5,10 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-public class AddItemUI {
-	private JFrame frame;
+public class AddItemUI extends JFrame {
+	private static final long serialVersionUID = 1L;
+
+	private JFrame frame = this;
 	
 	private String[] itemTypes = {"None", "Home Item", "Medicine", "Food"};
 	private JComboBox<String> dropDown = new JComboBox<String>(itemTypes);
@@ -20,7 +22,6 @@ public class AddItemUI {
 	}
 	
 	private void launchDisplay() {
-		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Add Item");
 		

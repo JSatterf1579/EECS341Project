@@ -5,8 +5,9 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-public class AnalyticsUI {
-	private JFrame frame;
+public class AnalyticsUI extends JFrame {
+	private static final long serialVersionUID = 1L;
+	private JFrame frame = this;
 	
 	public AnalyticsUI() {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -17,7 +18,6 @@ public class AnalyticsUI {
 	}
 	
 	private void launchDisplay() {
-		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Analytics");
 

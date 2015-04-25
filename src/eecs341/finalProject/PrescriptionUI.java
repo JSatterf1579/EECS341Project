@@ -7,8 +7,9 @@ import java.sql.SQLException;
 
 import javax.swing.*;
 
-public class PrescriptionUI {
-	private JFrame frame;
+public class PrescriptionUI extends JFrame {
+	private static final long serialVersionUID = 1L;
+	private JFrame frame = this;
 	private MakePurchaseUI parent;
 	protected SQLConnection db;
 
@@ -33,7 +34,6 @@ public class PrescriptionUI {
 	}
 	
 	private void launchDisplay() {
-		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Add Prescription");
 		JTextArea itemIDLabel = new JTextArea("Item ID:");

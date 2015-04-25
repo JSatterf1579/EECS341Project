@@ -6,8 +6,9 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 
-public class MakeMemberUI {
-	private JFrame frame;
+public class MakeMemberUI extends JFrame {
+	private static final long serialVersionUID = 1L;
+	private JFrame frame = this;
 	private DefaultListModel<String> listModel = new DefaultListModel<String>();
 
 	public MakeMemberUI() {
@@ -28,7 +29,6 @@ public class MakeMemberUI {
 	}
 	
 	private void launchDisplay() {
-		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Add Prescription");
 		JTextArea nameLabel = new JTextArea("Name:");

@@ -6,9 +6,10 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-public class CheckoutUI {
+public class CheckoutUI extends JFrame {
+	private static final long serialVersionUID = 1L;
+	private JFrame frame = this;
 	
-	private JFrame frame;
 	private DefaultListModel<String> listModel;
 	private String memberID;
 	private JTextField member = new JTextField();
@@ -25,7 +26,6 @@ public class CheckoutUI {
 	}
 	
 	private void launchDisplay() {
-		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Checkout");
 		JList<String> itemList = new JList<String>(listModel);

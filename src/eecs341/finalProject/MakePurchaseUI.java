@@ -15,9 +15,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-public class MakePurchaseUI {
-	
-	private JFrame frame;
+public class MakePurchaseUI extends JFrame {
+	private static final long serialVersionUID = 1L;
+	private JFrame frame = this;
 	protected DefaultListModel<String> itemListModel;
 	protected SQLConnection db;
 	
@@ -61,7 +61,6 @@ public class MakePurchaseUI {
 	}
 	
 	private void launchDisplay() throws SQLConnectionException, SQLException {
-		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Make Purchase");
 		JList<String> itemList = new JList<String>(itemListModel);

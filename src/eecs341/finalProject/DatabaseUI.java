@@ -7,8 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class DatabaseUI {
-	private JFrame frame;
+public class DatabaseUI extends JFrame {
+	private static final long serialVersionUID = 1L;
+	private JFrame frame = this;
 	protected SQLConnection db;
 	
 	public DatabaseUI() {
@@ -27,7 +28,6 @@ public class DatabaseUI {
 	}
 	
 	private void launchDisplay() {
-		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Dobis Database");
 		

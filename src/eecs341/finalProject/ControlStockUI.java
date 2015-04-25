@@ -5,9 +5,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-public class ControlStockUI {
-	
-	private JFrame frame;
+public class ControlStockUI extends JFrame {
+	private static final long serialVersionUID = 1L;
+	private JFrame frame = this;
 
 	public ControlStockUI() {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -18,7 +18,6 @@ public class ControlStockUI {
 	}
 	
 	private void launchDisplay() {
-		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Control Stock");
 		JButton button1 = new JButton("Add item");
