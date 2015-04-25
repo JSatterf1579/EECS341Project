@@ -38,6 +38,20 @@ public class ControlStockUI {
 		frame.getContentPane().setBackground(Color.white);
 		frame.setVisible(true);
 		
+		button1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				new AddItemUI();
+			}
+		});
+		
+		button2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				new LookupItemUI();
+			}
+		});
+		
 		button3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
