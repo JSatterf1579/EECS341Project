@@ -2,15 +2,19 @@ package eecs341.finalProject;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.*;
 
 public class PrescriptionUI {
 	private JFrame frame;
 	private MakePurchaseUI parent;
+	protected SQLConnection db;
 
 	public PrescriptionUI(MakePurchaseUI parent) {
 		this.parent = parent;
+		this.db = parent.db;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();
@@ -23,27 +27,27 @@ public class PrescriptionUI {
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Add Prescription");
 		JTextArea itemIDLabel = new JTextArea("Item ID:");
-		JTextField itemID = new JTextField();
+		JTextField itemIDField = new JTextField();
 		JTextArea prescriberNameLabel = new JTextArea("Prescriber Name:");
-		JTextField prescriberName = new JTextField();
+		JTextField prescriberNameField = new JTextField();
 		JTextArea amountLabel = new JTextArea("Amount:");
-		JTextField amount = new JTextField();
+		JTextField amountField = new JTextField();
 		JTextArea unitLabel = new JTextArea("Unit:");
-		JTextField unit = new JTextField();
+		JTextField unitField = new JTextField();
 		JTextArea frequencyLabel = new JTextArea("Frequency:");
-		JTextField frequency = new JTextField();
+		JTextField frequencyField = new JTextField();
 		JButton add = new JButton("Add");
 
 		itemIDLabel.setBounds(20, 20, 120, 20);
-		itemID.setBounds(160, 20, 120, 20);
+		itemIDField.setBounds(160, 20, 120, 20);
 		prescriberNameLabel.setBounds(20, 60, 120, 20);
-		prescriberName.setBounds(160, 60, 120, 20);
+		prescriberNameField.setBounds(160, 60, 120, 20);
 		amountLabel.setBounds(20, 100, 120, 20);
-		amount.setBounds(160, 100, 120, 20);
+		amountField.setBounds(160, 100, 120, 20);
 		unitLabel.setBounds(20, 140, 120, 20);
-		unit.setBounds(160, 140, 120, 20);
+		unitField.setBounds(160, 140, 120, 20);
 		frequencyLabel.setBounds(20, 180, 120, 20);
-		frequency.setBounds(160, 180, 120, 20);
+		frequencyField.setBounds(160, 180, 120, 20);
 		add.setBounds(105, 300, 90, 50);
 
 
@@ -54,15 +58,15 @@ public class PrescriptionUI {
 		frequencyLabel.setEditable(false);
 		
 		frame.add(itemIDLabel);
-		frame.add(itemID);
+		frame.add(itemIDField);
 		frame.add(prescriberNameLabel);
-		frame.add(prescriberName);
+		frame.add(prescriberNameField);
 		frame.add(amountLabel);
-		frame.add(amount);
+		frame.add(amountField);
 		frame.add(unitLabel);
-		frame.add(unit);
+		frame.add(unitField);
 		frame.add(frequencyLabel);
-		frame.add(frequency);
+		frame.add(frequencyField);
 		frame.add(add);
 		frame.setSize(300, 400);
 		frame.setResizable(false);
@@ -71,11 +75,42 @@ public class PrescriptionUI {
 		frame.setVisible(true);
 		
 		add.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// TODO: SQL ADD THE PRESCRIPTION(?)
+			public void actionPerformed(ActionEvent event) {
+				int itemID;
+				String prescriberName;
+				int amount;
+				String unit;
+				String frequency;
+				try {
+					itemID = Integer.parseInt(itemIDField.getText());
+				} catch (NumberFormatException e) {
+					new PopupUI("Bad item ID", "The item ID must be an integer.");
+					return;
+				}
+				prescriberName = prescriberNameField.getText();
+				try {
+					amount = Integer.parseInt(amountField.getText());
+				} catch (NumberFormatException e) {
+					new PopupUI("Bad amount", "The amount must be an integer.");
+					return;
+				}
+				unit = unitField.getText();
+				frequency = frequencyField.getText();
+				addPrescription(itemID, prescriberName, amount, unit, frequency);
 				frame.dispose();
 				//parent.addPerscription(perscriptionID);
 			}
 		});
+	}
+	
+	void addPrescription(int itemID, String prescriberName, int amount, String unit, String frequency) {
+		try {
+			db.runQueryString("INSERT INTO Perscriptions (itemID, perscriberName, amountGiven, unit, fillingFrequency)"
+			                + "VALUES (" + itemID + ", " + prescriberName + ", " + amount + ", " + unit + ", " + frequency + ")");
+		} catch (SQLConnectionException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		} catch (SQLException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		}
 	}
 }

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class DatabaseUI {
 	private JFrame frame;
-	private SQLConnection db;
+	protected SQLConnection db;
 	
 	private String[] resultSetCol(ResultSet rs, int col) throws SQLException {
 		ArrayList<String> result = new ArrayList<String>();
@@ -81,7 +81,7 @@ public class DatabaseUI {
 		button2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				new MakePurchaseUI();
+				new MakePurchaseUI(DatabaseUI.this);
 			}
 		});
 		

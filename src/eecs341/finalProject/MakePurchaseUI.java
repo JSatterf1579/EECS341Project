@@ -19,8 +19,9 @@ public class MakePurchaseUI {
 	
 	private JFrame frame;
 	private DefaultListModel<String> itemListModel;
-	private SQLConnection db;
-
+	protected SQLConnection db;
+	
+	/*
 	public MakePurchaseUI() {
 		itemListModel = new DefaultListModel<String>();
 		SwingUtilities.invokeLater(new Runnable() {
@@ -39,10 +40,24 @@ public class MakePurchaseUI {
 			}
 		});
 	}
+	*/
 	
-	public MakePurchaseUI(DefaultListModel<String> listModel) {
-		this();
-		itemListModel = listModel;
+	public MakePurchaseUI(DatabaseUI parent) {
+		itemListModel = new DefaultListModel<String>();
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				db = parent.db;
+				try {
+					launchDisplay();
+				} catch (SQLConnectionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	private void launchDisplay() throws SQLConnectionException, SQLException {
@@ -155,10 +170,6 @@ public class MakePurchaseUI {
 		} catch (NumberFormatException e) {
 			new PopupUI(e.toString(), e.getMessage());
 		}
-	}
-	
-	public static void main(String[] args) {
-		new MakePurchaseUI();
 	}
 
 }

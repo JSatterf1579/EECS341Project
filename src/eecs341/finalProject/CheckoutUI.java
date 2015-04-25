@@ -74,7 +74,6 @@ public class CheckoutUI {
 		back.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				new MakePurchaseUI(listModel);
 			}
 		});
 		
