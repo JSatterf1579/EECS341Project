@@ -3,27 +3,50 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DatabaseUI {
 	private JFrame frame;
 	private SQLConnection db;
 	
+	private String[] resultSetCol(ResultSet rs, int col) throws SQLException {
+		ArrayList<String> result = new ArrayList<String>();
+		while(rs.next()) {
+		    String row = rs.getString(col);
+		    result.add(row);
+		}
+		return result.toArray(new String[result.size()]);
+	}
+	
 	public DatabaseUI() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				db = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.account, DBInfo.password, DBInfo.database);
-				launchDisplay();
+				db = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.database, DBInfo.account, DBInfo.password);
+				try {
+					db.initializeConnection();
+					launchDisplay();
+				} catch (SQLConnectionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 	}
 	
-	private void launchDisplay() {
+	private void launchDisplay() throws SQLConnectionException, SQLException {
 		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("JMJ Database");
 		
-		
-		String[] stores = {"none", "Store 1", "Store 2", "Store 3", "Store 4"};
+		ResultSet rs = db.runQueryString("SELECT address FROM Stores");
+		String[] stores = resultSetCol(rs, 1);
+		System.out.println(stores.length);
 		
 		JComboBox<String> dropDown = new JComboBox<String>(stores);
 		JButton button1 = new JButton("Control Stock");
