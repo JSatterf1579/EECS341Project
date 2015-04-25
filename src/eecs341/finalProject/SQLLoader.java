@@ -20,14 +20,15 @@ public class SQLLoader {
 		
 		SQLConnection conn;
 		
-		conn = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.account, DBInfo.password, DBInfo.database);
+		conn = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.database, DBInfo.account, DBInfo.password );
 		try {
 			conn.initializeConnection();
 		} catch (SQLConnectionException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println("1 for manufacturers \n 2 for Members \n 3 for products \n 4 for Scripts");
+		System.out.println("1 for manufacturers \n 2 for Members \n 3 for products \n 4 for Scripts"
+				+ "\n 5 for Filling locations \n 6 for Amounts Stocked");
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String input = "";
 		try {
@@ -46,6 +47,10 @@ public class SQLLoader {
 			loadItemData(conn);
 		case "4":
 			loadPrescriptionData(conn);
+		case "5":
+			loadFilledAt(conn);
+		case "6":
+			loadStocked(conn);
 		}
 		
 		
@@ -263,7 +268,7 @@ public class SQLLoader {
 		String medsQuery = "Select itemID from Medicine";
 		String scriptsInsert = "Insert into Prescription \n"
 				+ "values (?, ?, ?, ?, ?, ?)";
-		Integer[] items = getAllValues(medsQuery, conn);
+		Integer[] items = getAllValues(medsQuery, "itemID", conn);
 		
 		for(int i = 1; i < 30; i++) {
 			String pName = name1[(int)(9*Math.random())] + " " + name2[(int)(9 * Math.random())];
@@ -287,7 +292,53 @@ public class SQLLoader {
 		
 	}
 	
-	private static Integer[] getAllValues(String query, SQLConnection conn) {
+	public static void loadFilledAt(SQLConnection conn) {
+		String queryStores = "Select storeID from Stores";
+		String queryScripts = "Select prescriptionID from Prescription";
+		String filled = "Insert into FilledAt \n"
+				+ "values (?, ?)";
+		
+		Integer[] storeIDs = getAllValues(queryStores, "storeID", conn);
+		Integer[] scriptIDs = getAllValues(queryScripts, "prescriptionID", conn);
+		
+		for(int i: scriptIDs){
+			try {
+				Connection c1 = conn.getActiveConnection();
+				PreparedStatement p1 = c1.prepareStatement(filled);
+				p1.setInt(1, storeIDs[(int)(Math.random()*storeIDs.length)]);
+				p1.setInt(2, i);
+				p1.executeUpdate();
+			} catch (SQLConnectionException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void loadStocked (SQLConnection conn) {
+		String queryStores = "Select storeID from Stores";
+		String queryItems = "Select itemID from Items";
+		String insertQuery = "Insert into AmountStocked values (?, ?, ?)";
+		
+		Integer[] storeIDs = getAllValues(queryStores, "storeID", conn);
+		Integer[] itemIDs = getAllValues(queryItems, "itemID", conn);
+		
+		for(int i = 0; i < 200; i++) {
+			try {
+				Connection c1 = conn.getActiveConnection();
+				PreparedStatement p1 = c1.prepareStatement(insertQuery);
+				p1.setInt(1, itemIDs[(int)(itemIDs.length * Math.random())]);
+				p1.setInt(2, itemIDs[(int)(storeIDs.length * Math.random())]);
+				p1.setInt(3, 15 + (int)(35* Math.random()));
+				p1.executeUpdate();
+			} catch (SQLConnectionException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private static Integer[] getAllValues(String query, String col, SQLConnection conn) {
 		PreparedStatement p1;
 		Connection c1;
 		List<Integer> values = new ArrayList<>();
@@ -296,7 +347,7 @@ public class SQLLoader {
 			p1 = c1.prepareStatement(query);
 			ResultSet set = conn.runPreparedQuery(p1);
 			while(set.next()) {
-				values.add(set.getInt("itemID"));
+				values.add(set.getInt(col));
 			}
 			
 		} catch (SQLConnectionException | SQLException e) {
