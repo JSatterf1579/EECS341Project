@@ -89,30 +89,15 @@ public class MakePurchaseUI {
 		addItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				int itemID;
-				ResultSet rs;
-				String itemName;
-				double currentPrice;
 				try {
 					itemID = Integer.parseInt(item.getText());
-					rs = db.runQueryString("SELECT itemID, name, currentPrice FROM Items WHERE itemID = " + itemID);
-					if (rs.next()) {
-						itemName = rs.getString(2);
-						currentPrice = Double.parseDouble(rs.getString(3));
-						itemListModel.addElement(String.format("%5s  %10s  $%.2f",itemID, itemName, currentPrice));
-						item.setText("");
-						if (rs.next()) {
-							new PopupUI("Item collision", "The item ID you entered, " + itemID + ", was found more than once in the database.");
-						}
-					} else {
-						new PopupUI("Item not found", "The item ID you entered, " + itemID + ", was not found in the database.");
-					}
-				} catch (SQLConnectionException e) {
-					new PopupUI(e.toString(), e.getMessage());
-				} catch (SQLException e) {
-					new PopupUI(e.toString(), e.getMessage());
 				} catch (NumberFormatException e) {
-					new PopupUI(e.toString(), e.getMessage());
+					new PopupUI("Bad item ID", "The item ID must be an integer.");
+					return;
+				} finally {
+					item.setText("");
 				}
+				addItem(itemID);
 			}
 		});
 		
@@ -129,8 +114,7 @@ public class MakePurchaseUI {
 		
 		addPrescription.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new PrescriptionUI(itemListModel);
-				frame.dispose();
+				new PrescriptionUI(MakePurchaseUI.this);
 			}
 		});
 		
@@ -147,6 +131,31 @@ public class MakePurchaseUI {
 				new DatabaseUI();
 			}
 		});
+	}
+	
+	public void addItem(int itemID) {
+		try {
+			String itemName;
+			double currentPrice;
+			ResultSet rs = db.runQueryString("SELECT itemID, name, currentPrice FROM Items WHERE itemID = " + itemID);
+			if (rs.next()) {
+				itemName = rs.getString(2);
+				currentPrice = Double.parseDouble(rs.getString(3));
+				itemListModel.addElement(String.format("%5s  %10s  $%.2f",itemID, itemName, currentPrice));
+
+				if (rs.next()) {
+					new PopupUI("Item collision", "The item ID you entered, " + itemID + ", was found more than once in the database.");
+				}
+			} else {
+				new PopupUI("Item not found", "The item ID you entered, " + itemID + ", was not found in the database.");
+			}
+		} catch (SQLConnectionException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		} catch (SQLException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		} catch (NumberFormatException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		}
 	}
 	
 	public static void main(String[] args) {

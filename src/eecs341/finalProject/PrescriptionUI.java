@@ -5,20 +5,12 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-
 public class PrescriptionUI {
 	private JFrame frame;
-	private DefaultListModel<String> listModel = new DefaultListModel<String>();
+	private MakePurchaseUI parent;
 
-	public PrescriptionUI() {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				launchDisplay();
-			}
-		});
-	}
-	public PrescriptionUI(DefaultListModel<String> listModel) {
-		this.listModel = listModel;
+	public PrescriptionUI(MakePurchaseUI parent) {
+		this.parent = parent;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();
@@ -42,7 +34,6 @@ public class PrescriptionUI {
 		JTextField frequency = new JTextField();
 		JButton add = new JButton("Add");
 
-		
 		itemIDLabel.setBounds(20, 20, 120, 20);
 		itemID.setBounds(160, 20, 120, 20);
 		prescriberNameLabel.setBounds(20, 60, 120, 20);
@@ -83,13 +74,8 @@ public class PrescriptionUI {
 			public void actionPerformed(ActionEvent e) {
 				// TODO: SQL ADD THE PRESCRIPTION(?)
 				frame.dispose();
-				listModel.addElement(String.format("%5s  %10s  $%.2f", itemID.getText(), "Item Name", 0.00));
-				new MakePurchaseUI(listModel);
+				//parent.addPerscription(perscriptionID);
 			}
 		});
-	}
-	
-	public static void main(String[] args) {
-		new PrescriptionUI(new DefaultListModel<String>());
 	}
 }
