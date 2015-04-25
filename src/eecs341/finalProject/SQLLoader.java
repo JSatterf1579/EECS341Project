@@ -5,7 +5,11 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 import jdk.nashorn.internal.objects.PrototypeObject;
 
@@ -23,7 +27,7 @@ public class SQLLoader {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println("1 for manufacturers");
+		System.out.println("1 for manufacturers \n 2 for Members \n 3 for products \n 4 for Scripts");
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String input = "";
 		try {
@@ -32,11 +36,19 @@ public class SQLLoader {
 			e.printStackTrace();
 		}
 		
-		if(input.equals("1")) {
+		switch (input) {
+		case "1":
 			loadDistribData(conn);
-		} else if(input.equals("2")) {
+			break;
+		case "2":
 			loadMemData(conn);
+		case "3":
+			loadItemData(conn);
+		case "4":
+			loadPrescriptionData(conn);
 		}
+		
+		
 	}
 	
 	public static void loadDistribData(SQLConnection conn) {
@@ -115,32 +127,33 @@ public class SQLLoader {
 	
 	public static void loadItemData(SQLConnection conn) {
 		String[] brands = {"Funco", "Phil and Watson", "Patterson", "Pacemaker", "Popsee", "Cheezer","Funser", "Pipes and Co.", "Orange", "GZ", "Doors",
-				"Blah", "Coka", "Maek"};
+				"Blah", "Brand Co", "Microsoft"};
+		
+		String[] prodTypes = {"Food", "Home Items", "Medicine"};
 		
 		String query1 = "Insert into Items \n"
-				+ "(?, ?, ?, ?);";
+				+ "values (?, ?, ?, ?);";
 		
 		String queryFood = "Insert into Food \n"
-				+ "(?, ?, ?)";
+				+ "values (?, ?, ?)";
 		
-		String queryHG = "Insert into HomeGoods \n"
-				+ "(?, ?)";
+		String queryHG = "Insert into HomeItems \n"
+				+ " values (?, ?)";
 		
 		String queryD = "Insert into Medicine \n"
-				+ "(?, ?, ?, ?)";
+				+ " values (?, ?, ?, ?)";
 		
-		for(int i = 1; i < 2; i++) {
-			int type = (int)(1*Math.random()) + 1;
+		for(int i = 2; i < 101; i++) {
+			int type = (int)(3*Math.random()) + 1;
 			
 			int distid = (int)(10*Math.random()) + 1;
 			
 			
-			String sPrice = getInput("Picking " + type + " enter price.");
-			double price = Double.parseDouble(sPrice);
+			double price = Math.round(50*Math.random() * 100.0) / 100.0;
 			
-			String name = getInput("Picking " + type + " enter name");
+			String name = getInput("Picking " + prodTypes[type - 1] + " enter name");
 			
-			PreparedStatement p1;
+			PreparedStatement p1 = null;
 			Connection conn1;
 			
 			try {
@@ -148,8 +161,8 @@ public class SQLLoader {
 				p1 = conn1.prepareStatement(query1);
 				p1.setInt(1, i);
 				p1.setString(2, name);
-				p1.setInt(3, (int)(10*Math.random()) + 1);
-				p1.setDouble(4, price);
+				p1.setInt(3, distid);
+				p1.setString(4, Double.toString(price));
 				
 				
 			} catch (SQLConnectionException e) {
@@ -163,12 +176,17 @@ public class SQLLoader {
 			switch(type) {
 			case 1: {
 				String brand = brands[(int)(brands.length * Math.random())];
-				java.util.Date d = new java.util.Date();
-				Date expry = new Date(d.getDate());
+				Date expry = new Date(Calendar.getInstance().getTimeInMillis() + (long)(Math.random() * 2628000000L));
+				
 				
 				try {
 					conn1 = conn.getActiveConnection();
 					PreparedStatement p2 = conn1.prepareStatement(queryFood);
+					p2.setInt(1, i);
+					p2.setString(2, brand);
+					p2.setDate(3, expry);
+					p1.executeUpdate();
+					p2.executeUpdate();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -176,11 +194,57 @@ public class SQLLoader {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				System.out.println("Done");
+				break;
 			}
 			case 2: {
+				String brand = brands[(int)(brands.length * Math.random())];
+				
+				try {
+					conn1 = conn.getActiveConnection();
+					PreparedStatement p2 = conn1.prepareStatement(queryHG);
+					p2.setInt(1, i);
+					p2.setString(2, brand);
+					p1.executeUpdate();
+					p2.executeUpdate();
+				} catch (SQLConnectionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println("Done");
+				break;
+				
 				
 			}
 			case 3: {
+				String[] chem1 = {"Hydrogen", "Oxygen", "Nitrogen", "Silicon", "Rubidium", "Cesium", "Iron", "Boron", "Florine", "Magnesium", "Aluminium", "Uranium"};
+				String[] chem2 = {"Trichloride", "Dichloride", "Monochloride", "Hydride", "Sulfide", "Dihydride", "Cyclohexane", "Octane", "Decane", "Ethanol", "Methylamine"};
+				String cname = chem1[(int)(Math.random() * chem1.length)] + " " + chem2[(int)(Math.random() * chem2.length)];
+				String manufacturer = brands[(int)(brands.length * Math.random())];
+				String strength = ((int)(Math.random() * 150) + 10) + " mg";
+				
+				try {
+					conn1 = conn.getActiveConnection();
+					PreparedStatement p2 = conn1.prepareStatement(queryD);
+					p2.setInt(1, i);
+					p2.setString(2, cname);
+					p2.setString(3, manufacturer);
+					p2.setString(4, strength);
+					p1.executeUpdate();
+					p2.executeUpdate();
+				} catch (SQLConnectionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.out.println("Done");
+				break;
+				
 				
 			}
 			default: {
@@ -189,6 +253,58 @@ public class SQLLoader {
 			}
 			}
 		}
+	}
+	
+	public static void loadPrescriptionData(SQLConnection conn) {
+		String[] name1 = {"Bob", "Jon", "Steve", "Justin", "Joe", "Jub", "Mike", "Ross", "Joey", "James"};
+		String[] name2 = {"Bobson", "Evans", "Steves", "Justinson", "Josephs", "Jub", "Mike", "Ross", "Joey", "James"};
+		String unit = "mg";
+		String[] frequency = {"monthly", "weekly"}; 
+		String medsQuery = "Select itemID from Medicine";
+		String scriptsInsert = "Insert into Prescription \n"
+				+ "values (?, ?, ?, ?, ?, ?)";
+		Integer[] items = getAllValues(medsQuery, conn);
+		
+		for(int i = 1; i < 30; i++) {
+			String pName = name1[(int)(9*Math.random())] + " " + name2[(int)(9 * Math.random())];
+			String freq = frequency[(int)(2*Math.random())];
+			try {
+				Connection c1 = conn.getActiveConnection();
+				PreparedStatement p1 = c1.prepareStatement(scriptsInsert);
+				p1.setInt(1, i);
+				p1.setInt(2, items[(int)(Math.random()*items.length)]);
+				p1.setString(3, pName);
+				p1.setInt(4, (int)(Math.random() * 30) + 10);
+				p1.setString(5, ((int)(Math.random() * 30) + 80) + " mg" );
+				p1.setString(6, freq);
+				p1.executeUpdate();
+			} catch (SQLConnectionException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+	
+	private static Integer[] getAllValues(String query, SQLConnection conn) {
+		PreparedStatement p1;
+		Connection c1;
+		List<Integer> values = new ArrayList<>();
+		try {
+			c1 = conn.getActiveConnection();
+			p1 = c1.prepareStatement(query);
+			ResultSet set = conn.runPreparedQuery(p1);
+			while(set.next()) {
+				values.add(set.getInt("itemID"));
+			}
+			
+		} catch (SQLConnectionException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Integer[] retArray = new Integer[values.size()];
+		return values.toArray(retArray);
 	}
 	
 	public static String getInput(String prompt){
