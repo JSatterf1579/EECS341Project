@@ -11,6 +11,7 @@ public class CheckoutUI {
 	private JFrame frame;
 	private DefaultListModel<String> listModel;
 	private String memberID;
+	private JTextField member = new JTextField();
 
 	public CheckoutUI(DefaultListModel<String> listModel) {
 		this.listModel = listModel;
@@ -26,7 +27,6 @@ public class CheckoutUI {
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Make Purchase");
 		JList<String> itemList = new JList<String>(listModel);
-		JTextField member = new JTextField();
 		JTextArea memberLabel = new JTextArea("Member ID: ");
 		JButton addMember = new JButton("Submit");
 		JButton createMember = new JButton("Create JMJ");
@@ -61,13 +61,13 @@ public class CheckoutUI {
 		
 		addMember.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				memberID = member.getText();
+				setMemberID(member.getText());
 			}
 		});
 		
 		createMember.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Go to CreateMember page
+				new MakeMemberUI(listModel);
 			}
 		});
 		
@@ -77,10 +77,26 @@ public class CheckoutUI {
 				new MakePurchaseUI(listModel);
 			}
 		});
+		
+		checkout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO: SQL CREATE PURCHASE
+				new DatabaseUI();
+			}
+		});
 	}
 	
 	public static void main(String[] args) {
 		new CheckoutUI(new DefaultListModel<String>());
+	}
+
+	public String getMemberID() {
+		return memberID;
+	}
+
+	public void setMemberID(String memberID) {
+		this.memberID = memberID;
+		member.setText(memberID);
 	}
 
 }

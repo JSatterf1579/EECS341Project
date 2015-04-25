@@ -8,8 +8,15 @@ import javax.swing.*;
 
 public class PrescriptionUI {
 	private JFrame frame;
-	private DefaultListModel<String> listModel;
+	private DefaultListModel<String> listModel = new DefaultListModel<String>();
 
+	public PrescriptionUI() {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				launchDisplay();
+			}
+		});
+	}
 	public PrescriptionUI(DefaultListModel<String> listModel) {
 		this.listModel = listModel;
 		SwingUtilities.invokeLater(new Runnable() {
