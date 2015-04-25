@@ -5,8 +5,11 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import jdk.nashorn.internal.objects.PrototypeObject;
 
@@ -36,7 +39,7 @@ public class SQLLoader {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println("1 for manufacturers \n 2 for Members \n 3 for products");
+		System.out.println("1 for manufacturers \n 2 for Members \n 3 for products \n 4 for Scripts");
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String input = "";
 		try {
@@ -53,7 +56,10 @@ public class SQLLoader {
 			loadMemData(conn);
 		case "3":
 			loadItemData(conn);
+		case "4":
+			loadPrescriptionData(conn);
 		}
+		
 		
 	}
 	
@@ -259,6 +265,58 @@ public class SQLLoader {
 			}
 			}
 		}
+	}
+	
+	public static void loadPrescriptionData(SQLConnection conn) {
+		String[] name1 = {"Bob", "Jon", "Steve", "Justin", "Joe", "Jub", "Mike", "Ross", "Joey", "James"};
+		String[] name2 = {"Bobson", "Evans", "Steves", "Justinson", "Josephs", "Jub", "Mike", "Ross", "Joey", "James"};
+		String unit = "mg";
+		String[] frequency = {"monthly", "weekly"}; 
+		String medsQuery = "Select itemID from Medicine";
+		String scriptsInsert = "Insert into Prescription \n"
+				+ "values (?, ?, ?, ?, ?, ?)";
+		Integer[] items = getAllValues(medsQuery, conn);
+		
+		for(int i = 1; i < 30; i++) {
+			String pName = name1[(int)(9*Math.random())] + " " + name2[(int)(9 * Math.random())];
+			String freq = frequency[(int)(2*Math.random())];
+			try {
+				Connection c1 = conn.getActiveConnection();
+				PreparedStatement p1 = c1.prepareStatement(scriptsInsert);
+				p1.setInt(1, i);
+				p1.setInt(2, items[(int)(Math.random()*items.length)]);
+				p1.setString(3, pName);
+				p1.setInt(4, (int)(Math.random() * 30) + 10);
+				p1.setString(5, ((int)(Math.random() * 30) + 80) + " mg" );
+				p1.setString(6, freq);
+				p1.executeUpdate();
+			} catch (SQLConnectionException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+	
+	private static Integer[] getAllValues(String query, SQLConnection conn) {
+		PreparedStatement p1;
+		Connection c1;
+		List<Integer> values = new ArrayList<>();
+		try {
+			c1 = conn.getActiveConnection();
+			p1 = c1.prepareStatement(query);
+			ResultSet set = conn.runPreparedQuery(p1);
+			while(set.next()) {
+				values.add(set.getInt("itemID"));
+			}
+			
+		} catch (SQLConnectionException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Integer[] retArray = new Integer[values.size()];
+		return values.toArray(retArray);
 	}
 	
 	public static String getInput(String prompt){
