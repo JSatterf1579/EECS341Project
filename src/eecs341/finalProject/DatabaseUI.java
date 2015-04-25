@@ -23,19 +23,9 @@ public class DatabaseUI {
 	public DatabaseUI() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-//				db = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.database, DBInfo.account, DBInfo.password);
-//				try {
-//					db.initializeConnection();
-//					launchDisplay();
-//				} catch (SQLConnectionException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				} catch (SQLException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				db = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.database, DBInfo.account, DBInfo.password);
 				try {
-					db = Dobis.db;
+					db.initializeConnection();
 					launchDisplay();
 				} catch (SQLConnectionException e) {
 					// TODO Auto-generated catch block
@@ -84,34 +74,29 @@ public class DatabaseUI {
 		
 		button1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
 				new ControlStockUI();
 			}
 		});
 		button2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
 				new MakePurchaseUI(DatabaseUI.this);
 			}
 		});
 		
 		button3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-				//new PrescriptionUI(); TODO
+				new PrescriptionUI(db);
 			}
 		});
 		
 		button4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
 				new MakeMemberUI();
 			}
 		});
 		
 		button5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
 				new AnalyticsUI();
 			}
 		});

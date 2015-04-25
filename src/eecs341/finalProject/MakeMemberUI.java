@@ -70,17 +70,7 @@ public class MakeMemberUI {
 			public void actionPerformed(ActionEvent e) {
 				// TODO: SQL ADD THE MEMBER - CREATE A MEMBER ID
 				frame.dispose();
-				if (listModel.isEmpty()) {
-					new DatabaseUI();
-				} else {
-					CheckoutUI checkout = new CheckoutUI(listModel);
-					checkout.setMemberID("MEMBERID");
-				}
 			}
 		});
-	}
-	
-	public static void main(String[] args) {
-		new MakeMemberUI();
 	}
 }

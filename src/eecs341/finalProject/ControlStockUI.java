@@ -40,14 +40,12 @@ public class ControlStockUI {
 		
 		button1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
 				new AddItemUI();
 			}
 		});
 		
 		button2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
 				new LookupItemUI();
 			}
 		});
@@ -55,13 +53,8 @@ public class ControlStockUI {
 		button3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				new DatabaseUI();
 			}
 		});
-	}
-	
-	public static void main(String[] args) {
-		new ControlStockUI();
 	}
 
 }

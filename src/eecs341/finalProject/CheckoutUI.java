@@ -12,9 +12,11 @@ public class CheckoutUI {
 	private DefaultListModel<String> listModel;
 	private String memberID;
 	private JTextField member = new JTextField();
+	private MakePurchaseUI parent;
 
-	public CheckoutUI(DefaultListModel<String> listModel) {
-		this.listModel = listModel;
+	public CheckoutUI(MakePurchaseUI parent) {
+		this.parent = parent;
+		this.listModel = parent.itemListModel;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();
@@ -25,7 +27,7 @@ public class CheckoutUI {
 	private void launchDisplay() {
 		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
-		frame.setTitle("Make Purchase");
+		frame.setTitle("Checkout");
 		JList<String> itemList = new JList<String>(listModel);
 		JTextArea memberLabel = new JTextArea("Member ID: ");
 		JButton addMember = new JButton("Submit");
@@ -80,13 +82,10 @@ public class CheckoutUI {
 		checkout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// TODO: SQL CREATE PURCHASE
-				new DatabaseUI();
+				frame.dispose();
+				parent.doneCheckout();
 			}
 		});
-	}
-	
-	public static void main(String[] args) {
-		new CheckoutUI(new DefaultListModel<String>());
 	}
 
 	public String getMemberID() {

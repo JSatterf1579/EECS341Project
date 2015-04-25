@@ -59,13 +59,8 @@ public class LookupItemUI {
 		back.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				new ControlStockUI();
 			}
 		});
-	}
-	
-	public static void main(String[] args) {
-		new LookupItemUI();
 	}
 
 }

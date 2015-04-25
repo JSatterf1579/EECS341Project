@@ -48,13 +48,8 @@ public class AnalyticsUI {
 		back.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				new DatabaseUI();
 			}
 		});
-	}
-
-	public static void main(String[] args) {
-		new AnalyticsUI();
 	}
 
 }

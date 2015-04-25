@@ -96,7 +96,6 @@ public class AddItemUI {
 		back.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				new ControlStockUI();
 			}
 		});
 		
@@ -104,7 +103,6 @@ public class AddItemUI {
 			public void actionPerformed(ActionEvent e) {
 				// TODO: SQL ADD ITEM TO DATABASE
 				frame.dispose();
-				new ControlStockUI();
 			}
 		});
 	}
@@ -202,9 +200,5 @@ public class AddItemUI {
 		frame.add(expirationLabel);
 		frame.add(expiration);
 		frame.setVisible(true);
-	}
-	
-	public static void main(String[] args) {
-		new AddItemUI();
 	}
 }

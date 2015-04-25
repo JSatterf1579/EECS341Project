@@ -18,7 +18,7 @@ import javax.swing.SwingUtilities;
 public class MakePurchaseUI {
 	
 	private JFrame frame;
-	private DefaultListModel<String> itemListModel;
+	protected DefaultListModel<String> itemListModel;
 	protected SQLConnection db;
 	
 	/*
@@ -135,15 +135,13 @@ public class MakePurchaseUI {
 		
 		checkout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-				new CheckoutUI(itemListModel);
+				new CheckoutUI(MakePurchaseUI.this);
 			}
 		});
 		
 		back.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				new DatabaseUI();
 			}
 		});
 	}
@@ -173,7 +171,30 @@ public class MakePurchaseUI {
 	}
 	
 	public void addPrescription(int prescriptionID) {
-		//TODO
+		ResultSet rs;
+		try {
+			rs = db.runQueryString("SELECT prescriptionID, itemID FROM Prescription WHERE prescriptionID = " + prescriptionID);
+			if (rs.next()) {
+				int itemID = Integer.parseInt(rs.getString(2));
+				addItem(itemID);
+				if (rs.next()) {
+					new PopupUI("Prescription collision", "The prescription ID " + prescriptionID + " was found more than once in the database.");
+				}
+			} else {
+				new PopupUI("Prescription not found", "The prescription ID " + prescriptionID + " was not found in the database.");
+			}
+		} catch (SQLConnectionException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		} catch (SQLException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		} catch (NumberFormatException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		}
+		
+	}
+	
+	protected void doneCheckout() {
+		frame.dispose();
 	}
 
 }
