@@ -6,7 +6,6 @@ import java.awt.event.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class DatabaseUI {
 	private JFrame frame;
@@ -46,7 +45,6 @@ public class DatabaseUI {
 		
 		ResultSet rs = db.runQueryString("SELECT address FROM Stores");
 		String[] stores = resultSetCol(rs, 1);
-		System.out.println(stores.length);
 		
 		JComboBox<String> dropDown = new JComboBox<String>(stores);
 		JButton button1 = new JButton("Control Stock");
