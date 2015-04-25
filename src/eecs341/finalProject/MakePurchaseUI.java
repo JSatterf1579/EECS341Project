@@ -98,7 +98,7 @@ public class MakePurchaseUI {
 					if (rs.next()) {
 						itemName = rs.getString(2);
 						currentPrice = Double.parseDouble(rs.getString(3));
-						itemListModel.addElement(String.format("%5s  %10s  $%.2f",itemID, itemName, currentPrice));
+						itemListModel.addElement(String.format("%3s  %25s  $%2.2f",itemID, itemName, currentPrice));
 						item.setText("");
 						if (rs.next()) {
 							new PopupUI("Item collision", "The item ID you entered, " + itemID + ", was found more than once in the database.");

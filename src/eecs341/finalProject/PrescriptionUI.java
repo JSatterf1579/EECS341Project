@@ -83,7 +83,7 @@ public class PrescriptionUI {
 			public void actionPerformed(ActionEvent e) {
 				// TODO: SQL ADD THE PRESCRIPTION(?)
 				frame.dispose();
-				listModel.addElement(String.format("%5s  %10s  $%.2f", itemID.getText(), "Item Name", 0.00));
+				listModel.addElement(String.format("%5s  %25s  $%.2f", itemID.getText(), "Item Name", 0.00));
 				new MakePurchaseUI(listModel);
 			}
 		});
