@@ -9,11 +9,15 @@ public class AddItemUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JFrame frame = this;
+	private JFrame parent;
+	private SQLConnection db;
 	
 	private String[] itemTypes = {"None", "Home Item", "Medicine", "Food"};
 	private JComboBox<String> dropDown = new JComboBox<String>(itemTypes);
 	
-	public AddItemUI() {
+	public AddItemUI(JFrame parent, SQLConnection db) {
+		this.parent = parent;
+		this.db = db;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();

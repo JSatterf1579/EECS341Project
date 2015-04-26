@@ -8,8 +8,12 @@ import javax.swing.*;
 public class AnalyticsUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JFrame frame = this;
+	private JFrame parent;
+	private SQLConnection db;
 	
-	public AnalyticsUI() {
+	public AnalyticsUI(JFrame parent, SQLConnection db) {
+		this.parent = parent;
+		this.db = db;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();

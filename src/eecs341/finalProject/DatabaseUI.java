@@ -13,9 +13,9 @@ public class DatabaseUI extends JFrame {
 	protected SQLConnection db;
 	
 	public DatabaseUI() {
+		db = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.database, DBInfo.account, DBInfo.password);
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				db = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.database, DBInfo.account, DBInfo.password);
 				try {
 					db.initializeConnection();
 				} catch (SQLConnectionException e) {
@@ -72,30 +72,30 @@ public class DatabaseUI extends JFrame {
 		
 		controlStockButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new ControlStockUI();
+				new ControlStockUI(DatabaseUI.this, db);
 			}
 		});
 		makePurchaseButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new MakePurchaseUI(DatabaseUI.this);
+				new MakePurchaseUI(DatabaseUI.this, db);
 			}
 		});
 		
 		makePrescriptionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new PrescriptionUI(db);
+				new PrescriptionUI(DatabaseUI.this, db);
 			}
 		});
 		
 		makeMemberButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new MakeMemberUI();
+				new MakeMemberUI(DatabaseUI.this, db);
 			}
 		});
 		
 		analyticsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new AnalyticsUI();
+				new AnalyticsUI(DatabaseUI.this, db);
 			}
 		});
 	}

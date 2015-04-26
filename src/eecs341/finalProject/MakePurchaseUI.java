@@ -20,33 +20,14 @@ public class MakePurchaseUI extends JFrame {
 	private JFrame frame = this;
 	protected DefaultListModel<String> itemListModel;
 	protected SQLConnection db;
+	private JFrame parent;
 	
-	/*
-	public MakePurchaseUI() {
+	public MakePurchaseUI(JFrame parent, SQLConnection db) {
 		itemListModel = new DefaultListModel<String>();
+		this.parent = parent;
+		this.db = db;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				db = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.database, DBInfo.account, DBInfo.password);
-				try {
-					db.initializeConnection();
-					launchDisplay();
-				} catch (SQLConnectionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	*/
-	
-	public MakePurchaseUI(DatabaseUI parent) {
-		itemListModel = new DefaultListModel<String>();
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				db = parent.db;
 				try {
 					launchDisplay();
 				} catch (SQLConnectionException e) {
@@ -128,13 +109,13 @@ public class MakePurchaseUI extends JFrame {
 		
 		addPrescription.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new PrescriptionUI(MakePurchaseUI.this);
+				new PrescriptionUI(MakePurchaseUI.this, db);
 			}
 		});
 		
 		checkout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new CheckoutUI(MakePurchaseUI.this);
+				new CheckoutUI(MakePurchaseUI.this, db, itemListModel);
 			}
 		});
 		

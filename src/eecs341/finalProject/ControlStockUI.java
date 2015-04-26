@@ -8,8 +8,12 @@ import javax.swing.*;
 public class ControlStockUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JFrame frame = this;
+	private JFrame parent;
+	private SQLConnection db;
 
-	public ControlStockUI() {
+	public ControlStockUI(JFrame parent, SQLConnection db) {
+		this.parent = parent;
+		this.db = db;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();
@@ -39,13 +43,13 @@ public class ControlStockUI extends JFrame {
 		
 		button1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new AddItemUI();
+				new AddItemUI(ControlStockUI.this, db);
 			}
 		});
 		
 		button2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new LookupItemUI();
+				new LookupItemUI(ControlStockUI.this, db);
 			}
 		});
 		

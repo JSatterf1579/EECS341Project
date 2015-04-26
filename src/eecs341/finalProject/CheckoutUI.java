@@ -13,11 +13,13 @@ public class CheckoutUI extends JFrame {
 	private DefaultListModel<String> listModel;
 	private String memberID;
 	private JTextField member = new JTextField();
-	private MakePurchaseUI parent;
+	private JFrame parent;
+	private SQLConnection db;
 
-	public CheckoutUI(MakePurchaseUI parent) {
+	public CheckoutUI(JFrame parent, SQLConnection db, DefaultListModel<String> listModel) {
 		this.parent = parent;
-		this.listModel = parent.itemListModel;
+		this.db = db;
+		this.listModel = listModel;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();
@@ -83,7 +85,7 @@ public class CheckoutUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO: SQL CREATE PURCHASE
 				frame.dispose();
-				parent.doneCheckout();
+				((MakePurchaseUI)parent).doneCheckout();
 			}
 		});
 	}

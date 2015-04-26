@@ -10,21 +10,11 @@ import javax.swing.*;
 public class PrescriptionUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JFrame frame = this;
-	private MakePurchaseUI parent;
+	private JFrame parent;
 	protected SQLConnection db;
 
-	public PrescriptionUI(MakePurchaseUI parent) {
+	public PrescriptionUI(JFrame parent, SQLConnection db) {
 		this.parent = parent;
-		this.db = parent.db;
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				launchDisplay();
-			}
-		});
-	}
-	
-	public PrescriptionUI(SQLConnection db) {
-		this.parent = null;
 		this.db = db;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -118,8 +108,8 @@ public class PrescriptionUI extends JFrame {
 				} finally {
 					frame.dispose();
 				}
-				if (parent != null) {
-					parent.addPrescription(prescriptionID);
+				if (parent instanceof MakePurchaseUI) {
+					((MakePurchaseUI)parent).addPrescription(prescriptionID);
 				}
 			}
 		});

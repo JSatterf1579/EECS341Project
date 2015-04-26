@@ -10,8 +10,12 @@ public class MakeMemberUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JFrame frame = this;
 	private DefaultListModel<String> listModel = new DefaultListModel<String>();
+	private JFrame parent;
+	private SQLConnection db;
 
-	public MakeMemberUI() {
+	public MakeMemberUI(JFrame parent, SQLConnection db) {
+		this.parent = parent;
+		this.db = db;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();
