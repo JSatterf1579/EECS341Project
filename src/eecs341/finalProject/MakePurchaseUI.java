@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -21,11 +22,13 @@ public class MakePurchaseUI extends JFrame {
 	protected DefaultListModel<String> itemListModel;
 	protected SQLConnection db;
 	private JFrame parent;
+	private ArrayList<Integer> prescriptionIDs;
 	
 	public MakePurchaseUI(JFrame parent, SQLConnection db) {
 		itemListModel = new DefaultListModel<String>();
 		this.parent = parent;
 		this.db = db;
+		prescriptionIDs = new ArrayList<Integer>();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -115,7 +118,7 @@ public class MakePurchaseUI extends JFrame {
 		
 		checkout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new CheckoutUI(MakePurchaseUI.this, db, itemListModel);
+				new CheckoutUI(MakePurchaseUI.this, db, itemListModel, prescriptionIDs);
 			}
 		});
 		
@@ -155,6 +158,7 @@ public class MakePurchaseUI extends JFrame {
 		try {
 			rs = db.runQueryString("SELECT prescriptionID, itemID FROM Prescription WHERE prescriptionID = " + prescriptionID);
 			if (rs.next()) {
+				prescriptionIDs.add(prescriptionID);
 				int itemID = Integer.parseInt(rs.getString(2));
 				callbackAddItem(itemID);
 				if (rs.next()) {

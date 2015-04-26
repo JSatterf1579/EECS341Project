@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -11,14 +13,16 @@ public class CheckoutUI extends JFrame {
 	private JFrame frame = this;
 	
 	private DefaultListModel<String> listModel;
-	private JTextField member = new JTextField();
+	private JTextField memberField = new JTextField();
 	private JFrame parent;
 	private SQLConnection db;
+	private ArrayList<Integer> prescriptionIDs;
 
-	public CheckoutUI(JFrame parent, SQLConnection db, DefaultListModel<String> listModel) {
+	public CheckoutUI(JFrame parent, SQLConnection db, DefaultListModel<String> listModel, ArrayList<Integer> prescriptionIDs) {
 		this.parent = parent;
 		this.db = db;
 		this.listModel = listModel;
+		this.prescriptionIDs = prescriptionIDs;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();
@@ -36,7 +40,7 @@ public class CheckoutUI extends JFrame {
 		JButton checkout = new JButton("Checkout");
 		
 		memberLabel.setBounds(200, 10, 90, 20);
-		member.setBounds(200, 40, 90, 20);
+		memberField.setBounds(200, 40, 90, 20);
 		createMember.setBounds(200, 100, 90, 20);
 		itemList.setBounds(10, 10, 180, 300);
 		back.setBounds(10, 320, 90, 50);
@@ -47,7 +51,7 @@ public class CheckoutUI extends JFrame {
 		
 		memberLabel.setEditable(false);
 		
-		frame.add(member);
+		frame.add(memberField);
 		frame.add(memberLabel);
 		frame.add(createMember);
 		frame.add(itemList);
@@ -72,8 +76,26 @@ public class CheckoutUI extends JFrame {
 		});
 		
 		checkout.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//db.runUpdateString("INSERT ")
+			public void actionPerformed(ActionEvent event) {
+				int memberID;
+				try {
+					memberID = Integer.parseInt(memberField.getText());
+					int purchaseID = db.runUpdateString("INSERT INTO Purchase (purchaseDate, amountCharged, paymentType, memberID)"
+						           	                  + "VALUES ('2011-04-12T00:00:00.000', -999, 'dummy_pmt_type', " + memberID + ")");
+					for (int prescriptionID : prescriptionIDs) {
+						db.runUpdateString("INSERT INTO PrescriptionFilled (purchaseID, prescriptionID)"
+	         	                         + "VALUES (" + purchaseID + ", " + prescriptionID + ")");
+					}
+				} catch (SQLConnectionException e) {
+					new PopupUI(e.toString(), e.getMessage());
+					return;
+				} catch (SQLException e) {
+					new PopupUI(e.toString(), e.getMessage());
+					return;
+				} catch (NumberFormatException e) {
+					new PopupUI(e.toString(), e.getMessage());
+					return;
+				}
 				frame.dispose();
 				((MakePurchaseUI)parent).callbackDoneCheckout();
 			}
@@ -81,7 +103,7 @@ public class CheckoutUI extends JFrame {
 	}
 
 	public void callbackSetMemberID(int memberID) {
-		member.setText(Integer.toString(memberID));
+		memberField.setText(Integer.toString(memberID));
 	}
 
 }

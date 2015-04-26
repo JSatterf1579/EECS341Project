@@ -2,6 +2,7 @@ package eecs341.finalProject;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -14,6 +15,25 @@ public class AddItemUI extends JFrame {
 	
 	private String[] itemTypes = {"None", "Home Item", "Medicine", "Food"};
 	private JComboBox<String> dropDown = new JComboBox<String>(itemTypes);
+	private ArrayList<JComponent> temporaryUIElements = new ArrayList<>();
+	
+	// Common fields
+	JTextField itemIDField = null;
+	JTextField nameField = null;
+	JTextField supplierIDField = null;
+	JTextField priceField = null;
+	
+	// Home Item fields
+	JTextField brandField = null;
+	
+	// Medicine fields
+	JTextField scientificNameField = null;
+	JTextField manufacturerField = null;
+	JTextField strengthField = null;
+	
+	// Food fields
+	// duplicate brandField;
+	JTextField expirationField = null;
 	
 	public AddItemUI(JFrame parent, SQLConnection db) {
 		this.parent = parent;
@@ -30,13 +50,13 @@ public class AddItemUI extends JFrame {
 		frame.setTitle("Add Item");
 		
 		JTextArea itemIDLabel = new JTextArea("Item ID:");
-		JTextField itemID = new JTextField();
+		itemIDField = new JTextField();
 		JTextArea nameLabel = new JTextArea("Name:");
-		JTextField name = new JTextField();
+		nameField = new JTextField();
 		JTextArea supplierIDLabel = new JTextArea("Supplier ID:");
-		JTextField supplierID = new JTextField();
+		supplierIDField = new JTextField();
 		JTextArea priceLabel = new JTextArea("Price:");
-		JTextField price = new JTextField();
+		priceField = new JTextField();
 
 		JButton back = new JButton("Back");
 		JButton add = new JButton("Add");
@@ -44,13 +64,13 @@ public class AddItemUI extends JFrame {
 		
 		dropDown.setBounds(50, 20, 200, 20);
 		itemIDLabel.setBounds(20, 60, 120, 20);
-		itemID.setBounds(160, 60, 120, 20);
+		itemIDField.setBounds(160, 60, 120, 20);
 		nameLabel.setBounds(20, 100, 120, 20);
-		name.setBounds(160, 100, 120, 20);
+		nameField.setBounds(160, 100, 120, 20);
 		supplierIDLabel.setBounds(20, 140, 120, 20);
-		supplierID.setBounds(160, 140, 120, 20);
+		supplierIDField.setBounds(160, 140, 120, 20);
 		priceLabel.setBounds(20, 180, 120, 20);
-		price.setBounds(160, 180, 120, 20);
+		priceField.setBounds(160, 180, 120, 20);
 		add.setBounds(200, 330, 90, 40);
 		back.setBounds(10, 330, 90, 40);
 		
@@ -61,13 +81,13 @@ public class AddItemUI extends JFrame {
 		
 		frame.add(dropDown);
 		frame.add(itemIDLabel);
-		frame.add(itemID);
+		frame.add(itemIDField);
 		frame.add(nameLabel);
-		frame.add(name);
+		frame.add(nameField);
 		frame.add(supplierIDLabel);
-		frame.add(supplierID);
+		frame.add(supplierIDField);
 		frame.add(priceLabel);
-		frame.add(price);
+		frame.add(priceField);
 		frame.add(add);
 		frame.add(back);
 
@@ -85,9 +105,6 @@ public class AddItemUI extends JFrame {
 					break;
 				case "Medicine":
 					medicineInput();
-					break;
-				case "Book": // For some reason I thought we had books. Do we have books?
-					bookInput();
 					break;
 				case "Food":
 					foodInput();
@@ -113,97 +130,99 @@ public class AddItemUI extends JFrame {
 	}
 	
 	private void homeItemInput() {
-		frame.setVisible(false);
-		frame.remove(dropDown);
-		
-		JTextField itemType = new JTextField("Home Item");
 		JTextArea brandLabel = new JTextArea("Brand:");
-		JTextField brand = new JTextField();
+		brandField = new JTextField();
 		
-		itemType.setBounds(50, 20, 200, 20);
 		brandLabel.setBounds(20, 220, 120, 20);
-		brand.setBounds(160, 220, 120, 20);
+		brandField.setBounds(160, 220, 120, 20);
 		
-		itemType.setEditable(false);
-		itemType.setHorizontalAlignment(JTextField.CENTER);
-		itemType.setBorder(null);
 		brandLabel.setEditable(false);
 		
-		frame.add(itemType);
+		clearTemporaryUI();
+		
 		frame.add(brandLabel);
-		frame.add(brand);
-		frame.setVisible(true);
+		frame.add(brandField);
+		
+		frame.revalidate();
+		frame.repaint();
+		
+		temporaryUIElements.add(brandLabel);
+		temporaryUIElements.add(brandField);
 	}
 	
 	private void medicineInput() {
-		frame.setVisible(false);
-		frame.remove(dropDown);
-		
-		JTextField itemType = new JTextField("Medicine");
 		JTextArea scientificNameLabel = new JTextArea("Scientific Name:");
-		JTextField scientificName = new JTextField();
+		scientificNameField = new JTextField();
 		JTextArea manufacturerLabel = new JTextArea("Manufacturer:");
-		JTextField manufacturer = new JTextField();
+		manufacturerField = new JTextField();
 		JTextArea strengthLabel = new JTextArea("Strength:");
-		JTextField strength = new JTextField();
+		strengthField = new JTextField();
 		
-		itemType.setBounds(50, 20, 200, 20);
 		scientificNameLabel.setBounds(20, 220, 120, 20);
-		scientificName.setBounds(160, 220, 120, 20);
+		scientificNameField.setBounds(160, 220, 120, 20);
 		manufacturerLabel.setBounds(20, 260, 120, 20);
-		manufacturer.setBounds(160, 260, 120, 20);
+		manufacturerField.setBounds(160, 260, 120, 20);
 		strengthLabel.setBounds(20, 300, 120, 20);
-		strength.setBounds(160, 300, 120, 20);
+		strengthField.setBounds(160, 300, 120, 20);
 		
-		itemType.setEditable(false);
 		scientificNameLabel.setEditable(false);
 		manufacturerLabel.setEditable(false);
 		strengthLabel.setEditable(false);
-		itemType.setHorizontalAlignment(JTextField.CENTER);
-		itemType.setBorder(null);
+
+		clearTemporaryUI();
 		
-		frame.add(itemType);
 		frame.add(scientificNameLabel);
-		frame.add(scientificName);
+		frame.add(scientificNameField);
 		frame.add(manufacturerLabel);
-		frame.add(manufacturer);
+		frame.add(manufacturerField);
 		frame.add(strengthLabel);
-		frame.add(strength);
+		frame.add(strengthField);
+
+		frame.revalidate();
+		frame.repaint();
 		
-		frame.setVisible(true);
-	}
-	
-	private void bookInput() {
-		
+		temporaryUIElements.add(scientificNameLabel);
+		temporaryUIElements.add(scientificNameField);
+		temporaryUIElements.add(manufacturerLabel);
+		temporaryUIElements.add(manufacturerField);
+		temporaryUIElements.add(strengthLabel);
+		temporaryUIElements.add(strengthField);
 	}
 	
 	private void foodInput() {
-		frame.setVisible(false);
-		frame.remove(dropDown);
-		
-		JTextField itemType = new JTextField("Food");
 		JTextArea brandLabel = new JTextArea("Brand:");
-		JTextField brand = new JTextField();
+		brandField = new JTextField();
 		JTextArea expirationLabel = new JTextArea("Expiration Date:");
-		JTextField expiration =  new JTextField();
+		expirationField =  new JTextField();
 		
-		itemType.setBounds(50, 20, 200, 20);
 		brandLabel.setBounds(20, 220, 120, 20);
-		brand.setBounds(160, 220, 120, 20);
+		brandField.setBounds(160, 220, 120, 20);
 		expirationLabel.setBounds(20, 260, 120, 20);
-		expiration.setBounds(160, 260, 120, 20);
+		expirationField.setBounds(160, 260, 120, 20);
 		
-		itemType.setEditable(false);
-		itemType.setHorizontalAlignment(JTextField.CENTER);
-		itemType.setBorder(null);
 		brandLabel.setEditable(false);
 		expirationLabel.setEditable(false);
 		
-		frame.add(itemType);
+		clearTemporaryUI();
+		
 		frame.add(brandLabel);
-		frame.add(brand);
+		frame.add(brandField);
 		frame.add(expirationLabel);
-		frame.add(expiration);
-		frame.setVisible(true);
+		frame.add(expirationField);
+		
+		frame.revalidate();
+		frame.repaint();
+		
+		temporaryUIElements.add(brandLabel);
+		temporaryUIElements.add(brandField);
+		temporaryUIElements.add(expirationLabel);
+		temporaryUIElements.add(expirationField);
+	}
+	
+	private void clearTemporaryUI() {
+		for (JComponent UIElement : temporaryUIElements) {
+			frame.remove(UIElement);
+		}
+		temporaryUIElements = new ArrayList<JComponent>();
 	}
 }
