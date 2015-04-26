@@ -7,23 +7,14 @@ import java.sql.SQLException;
 
 import javax.swing.*;
 
-public class PrescriptionUI {
-	private JFrame frame;
-	private MakePurchaseUI parent;
+public class PrescriptionUI extends JFrame {
+	private static final long serialVersionUID = 1L;
+	private JFrame frame = this;
+	private JFrame parent;
 	protected SQLConnection db;
 
-	public PrescriptionUI(MakePurchaseUI parent) {
+	public PrescriptionUI(JFrame parent, SQLConnection db) {
 		this.parent = parent;
-		this.db = parent.db;
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				launchDisplay();
-			}
-		});
-	}
-	
-	public PrescriptionUI(SQLConnection db) {
-		this.parent = null;
 		this.db = db;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -33,7 +24,6 @@ public class PrescriptionUI {
 	}
 	
 	private void launchDisplay() {
-		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Add Prescription");
 		JTextArea itemIDLabel = new JTextArea("Item ID:");
@@ -108,7 +98,7 @@ public class PrescriptionUI {
 				frequency = frequencyField.getText();
 				int prescriptionID;
 				try {
-					prescriptionID = addPrescription(itemID, prescriberName, amount, unit, frequency);
+					prescriptionID = dbInsertNewPrescription(itemID, prescriberName, amount, unit, frequency);
 				} catch (SQLConnectionException e) {
 					new PopupUI(e.toString(), e.getMessage());
 					return;
@@ -118,16 +108,17 @@ public class PrescriptionUI {
 				} finally {
 					frame.dispose();
 				}
-				if (parent != null) {
-					parent.addPrescription(prescriptionID);
+				if (parent instanceof MakePurchaseUI) {
+					((MakePurchaseUI)parent).callbackUsePrescription(prescriptionID);
 				}
 			}
 		});
 	}
 	
-	int addPrescription(int itemID, String prescriberName, int amount, String unit, String frequency) throws SQLConnectionException, SQLException {
+	/* returns new perscriptionID */
+	int dbInsertNewPrescription(int itemID, String prescriberName, int amount, String unit, String frequency) throws SQLConnectionException, SQLException {
 		db.runUpdateString("INSERT INTO Prescription (itemID, prescriberName, amountGiven, unit, fillingFrequency)"
-				+ "VALUES (" + itemID + ", " + prescriberName + ", " + amount + ", " + unit + ", " + frequency + ")");
+				+ "VALUES (" + itemID + ", '" + prescriberName + "', " + amount + ", '" + unit + "', '" + frequency + "')");
 		ResultSet rs = db.runQueryString("SELECT LAST_INSERT_ID()");
 		if (rs.next()) {
 			return Integer.parseInt(rs.getString(1));

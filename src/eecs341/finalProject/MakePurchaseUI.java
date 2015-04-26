@@ -15,38 +15,19 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-public class MakePurchaseUI {
-	
-	private JFrame frame;
-	private DefaultListModel<String> itemListModel;
+public class MakePurchaseUI extends JFrame {
+	private static final long serialVersionUID = 1L;
+	private JFrame frame = this;
+	protected DefaultListModel<String> itemListModel;
 	protected SQLConnection db;
+	private JFrame parent;
 	
-	/*
-	public MakePurchaseUI() {
+	public MakePurchaseUI(JFrame parent, SQLConnection db) {
 		itemListModel = new DefaultListModel<String>();
+		this.parent = parent;
+		this.db = db;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				db = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.database, DBInfo.account, DBInfo.password);
-				try {
-					db.initializeConnection();
-					launchDisplay();
-				} catch (SQLConnectionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	*/
-	
-	public MakePurchaseUI(DatabaseUI parent) {
-		itemListModel = new DefaultListModel<String>();
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				db = parent.db;
 				try {
 					launchDisplay();
 				} catch (SQLConnectionException e) {
@@ -61,7 +42,6 @@ public class MakePurchaseUI {
 	}
 	
 	private void launchDisplay() throws SQLConnectionException, SQLException {
-		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Make Purchase");
 		JList<String> itemList = new JList<String>(itemListModel);
@@ -112,7 +92,7 @@ public class MakePurchaseUI {
 				} finally {
 					item.setText("");
 				}
-				addItem(itemID);
+				callbackAddItem(itemID);
 			}
 		});
 		
@@ -129,26 +109,24 @@ public class MakePurchaseUI {
 		
 		addPrescription.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new PrescriptionUI(MakePurchaseUI.this);
+				new PrescriptionUI(MakePurchaseUI.this, db);
 			}
 		});
 		
 		checkout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-				new CheckoutUI(itemListModel);
+				new CheckoutUI(MakePurchaseUI.this, db, itemListModel);
 			}
 		});
 		
 		back.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				new DatabaseUI();
 			}
 		});
 	}
 	
-	public void addItem(int itemID) {
+	public void callbackAddItem(int itemID) {
 		try {
 			String itemName;
 			double currentPrice;
@@ -172,8 +150,31 @@ public class MakePurchaseUI {
 		}
 	}
 	
-	public void addPrescription(int prescriptionID) {
-		//TODO
+	public void callbackUsePrescription(int prescriptionID) {
+		ResultSet rs;
+		try {
+			rs = db.runQueryString("SELECT prescriptionID, itemID FROM Prescription WHERE prescriptionID = " + prescriptionID);
+			if (rs.next()) {
+				int itemID = Integer.parseInt(rs.getString(2));
+				callbackAddItem(itemID);
+				if (rs.next()) {
+					new PopupUI("Prescription collision", "The prescription ID " + prescriptionID + " was found more than once in the database.");
+				}
+			} else {
+				new PopupUI("Prescription not found", "The prescription ID " + prescriptionID + " was not found in the database.");
+			}
+		} catch (SQLConnectionException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		} catch (SQLException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		} catch (NumberFormatException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		}
+		
+	}
+	
+	protected void callbackDoneCheckout() {
+		frame.dispose();
 	}
 
 }

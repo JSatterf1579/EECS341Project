@@ -5,11 +5,15 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-public class ControlStockUI {
-	
-	private JFrame frame;
+public class ControlStockUI extends JFrame {
+	private static final long serialVersionUID = 1L;
+	private JFrame frame = this;
+	private JFrame parent;
+	private SQLConnection db;
 
-	public ControlStockUI() {
+	public ControlStockUI(JFrame parent, SQLConnection db) {
+		this.parent = parent;
+		this.db = db;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();
@@ -18,7 +22,6 @@ public class ControlStockUI {
 	}
 	
 	private void launchDisplay() {
-		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Control Stock");
 		JButton button1 = new JButton("Add item");
@@ -40,28 +43,21 @@ public class ControlStockUI {
 		
 		button1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-				new AddItemUI();
+				new AddItemUI(ControlStockUI.this, db);
 			}
 		});
 		
 		button2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-				new LookupItemUI();
+				new LookupItemUI(ControlStockUI.this, db);
 			}
 		});
 		
 		button3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				new DatabaseUI();
 			}
 		});
-	}
-	
-	public static void main(String[] args) {
-		new ControlStockUI();
 	}
 
 }
