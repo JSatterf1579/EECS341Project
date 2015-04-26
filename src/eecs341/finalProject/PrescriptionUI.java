@@ -98,7 +98,7 @@ public class PrescriptionUI extends JFrame {
 				frequency = frequencyField.getText();
 				int prescriptionID;
 				try {
-					prescriptionID = addPrescription(itemID, prescriberName, amount, unit, frequency);
+					prescriptionID = dbInsertNewPrescription(itemID, prescriberName, amount, unit, frequency);
 				} catch (SQLConnectionException e) {
 					new PopupUI(e.toString(), e.getMessage());
 					return;
@@ -109,15 +109,16 @@ public class PrescriptionUI extends JFrame {
 					frame.dispose();
 				}
 				if (parent instanceof MakePurchaseUI) {
-					((MakePurchaseUI)parent).addPrescription(prescriptionID);
+					((MakePurchaseUI)parent).callbackUsePrescription(prescriptionID);
 				}
 			}
 		});
 	}
 	
-	int addPrescription(int itemID, String prescriberName, int amount, String unit, String frequency) throws SQLConnectionException, SQLException {
+	/* returns new perscriptionID */
+	int dbInsertNewPrescription(int itemID, String prescriberName, int amount, String unit, String frequency) throws SQLConnectionException, SQLException {
 		db.runUpdateString("INSERT INTO Prescription (itemID, prescriberName, amountGiven, unit, fillingFrequency)"
-				+ "VALUES (" + itemID + ", " + prescriberName + ", " + amount + ", " + unit + ", " + frequency + ")");
+				+ "VALUES (" + itemID + ", '" + prescriberName + "', " + amount + ", '" + unit + "', '" + frequency + "')");
 		ResultSet rs = db.runQueryString("SELECT LAST_INSERT_ID()");
 		if (rs.next()) {
 			return Integer.parseInt(rs.getString(1));

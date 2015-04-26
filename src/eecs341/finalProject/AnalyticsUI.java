@@ -2,8 +2,13 @@ package eecs341.finalProject;
 
 import java.awt.Color;
 import java.awt.event.*;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class AnalyticsUI extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -26,8 +31,15 @@ public class AnalyticsUI extends JFrame {
 		frame.setTitle("Analytics");
 
 		JButton back = new JButton("Back");
-		back.setBounds(10, 330, 90, 40);
+		JButton execute = new JButton("Execute");
+		back.setBounds(20, 300, 120, 40);
+		execute.setBounds(160, 300, 120, 40);
 		frame.add(back);
+		frame.add(execute);
+		
+		JTable resultTable = new JTable();
+		resultTable.setBounds(20,160,260,120);
+		frame.add(resultTable);
 		
 		JTextArea queryLabel = new JTextArea("Enter Query:");
 		queryLabel.setEditable(false);
@@ -39,10 +51,6 @@ public class AnalyticsUI extends JFrame {
 		queryScroll.setBounds(20, 40, 260, 100);
 		query.setLineWrap(true);
 		frame.add(queryScroll);
-		
-		// Preset Queries will go here
-		
-
 		frame.setSize(300, 400);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
@@ -54,6 +62,40 @@ public class AnalyticsUI extends JFrame {
 				frame.dispose();
 			}
 		});
+		
+		execute.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				ResultSet rs;
+				try {
+					rs = db.runQueryString(query.getText());
+					resultTable.setModel(buildTableModel(rs));
+				} catch (SQLConnectionException e) {
+					new PopupUI(e.toString(), e.getMessage());
+				} catch (SQLException e) {
+					new PopupUI(e.toString(), e.getMessage());
+				}
+			}
+		});
+	}
+	
+	private DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
+	    ResultSetMetaData metaData = rs.getMetaData();
+	    // names of columns
+	    Vector<String> columnNames = new Vector<String>();
+	    int columnCount = metaData.getColumnCount();
+	    for (int column = 1; column <= columnCount; column++) {
+	        columnNames.add(metaData.getColumnName(column));
+	    }
+	    // data of the table
+	    Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+	    while (rs.next()) {
+	        Vector<Object> vector = new Vector<Object>();
+	        for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+	            vector.add(rs.getObject(columnIndex));
+	        }
+	        data.add(vector);
+	    }
+	    return new DefaultTableModel(data, columnNames);
 	}
 
 }

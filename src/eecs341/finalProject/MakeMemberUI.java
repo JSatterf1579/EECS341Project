@@ -2,6 +2,7 @@ package eecs341.finalProject;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.*;
 
@@ -9,7 +10,6 @@ import javax.swing.*;
 public class MakeMemberUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JFrame frame = this;
-	private DefaultListModel<String> listModel = new DefaultListModel<String>();
 	private JFrame parent;
 	private SQLConnection db;
 
@@ -23,33 +23,24 @@ public class MakeMemberUI extends JFrame {
 		});
 	}
 	
-	public MakeMemberUI(DefaultListModel<String> listModel) {
-		this.listModel = listModel;
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				launchDisplay();
-			}
-		});
-	}
-	
 	private void launchDisplay() {
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Add Prescription");
 		JTextArea nameLabel = new JTextArea("Name:");
-		JTextField name = new JTextField();
+		JTextField nameField = new JTextField();
 		JTextArea addressLabel = new JTextArea("Address:");
-		JTextField address = new JTextField();
+		JTextField addressField = new JTextField();
 		JTextArea phoneLabel = new JTextArea("Phone:");
-		JTextField phone = new JTextField();
+		JTextField phoneField = new JTextField();
 		JButton add = new JButton("Add");
 
 		
 		nameLabel.setBounds(20, 20, 120, 20);
-		name.setBounds(160, 20, 120, 20);
+		nameField.setBounds(160, 20, 120, 20);
 		addressLabel.setBounds(20, 60, 120, 20);
-		address.setBounds(160, 60, 120, 20);
+		addressField.setBounds(160, 60, 120, 20);
 		phoneLabel.setBounds(20, 100, 120, 20);
-		phone.setBounds(160, 100, 120, 20);
+		phoneField.setBounds(160, 100, 120, 20);
 		add.setBounds(105, 300, 90, 50);
 
 
@@ -58,11 +49,11 @@ public class MakeMemberUI extends JFrame {
 		phoneLabel.setEditable(false);
 		
 		frame.add(nameLabel);
-		frame.add(name);
+		frame.add(nameField);
 		frame.add(addressLabel);
-		frame.add(address);
+		frame.add(addressField);
 		frame.add(phoneLabel);
-		frame.add(phone);
+		frame.add(phoneField);
 		frame.add(add);
 		frame.setSize(300, 400);
 		frame.setResizable(false);
@@ -71,8 +62,24 @@ public class MakeMemberUI extends JFrame {
 		frame.setVisible(true);
 		
 		add.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// TODO: SQL ADD THE MEMBER - CREATE A MEMBER ID
+			public void actionPerformed(ActionEvent event) {
+				String name = nameField.getText();
+				String address = addressField.getText();
+				String phone = phoneField.getText();
+				int memberID;
+				try {
+					memberID = db.runUpdateString("INSERT INTO AwardsClubMember (name, address, phoneNumber, credits)"
+							                    + "VALUES ('" + name + "', '" + address + "', '" + phone + "', " + 0 + ")");
+				} catch (SQLConnectionException e) {
+					new PopupUI(e.toString(), e.getMessage());
+					return;
+				} catch (SQLException e) {
+					new PopupUI(e.toString(), e.getMessage());
+					return;
+				}
+				if (parent instanceof CheckoutUI) {
+					((CheckoutUI)parent).callbackSetMemberID(memberID);
+				}
 				frame.dispose();
 			}
 		});

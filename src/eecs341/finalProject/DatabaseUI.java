@@ -33,7 +33,7 @@ public class DatabaseUI extends JFrame {
 		
 		String[] stores;
 		try {
-			stores = getStoreAddresses();
+			stores = dbQueryStoreAddresses();
 		} catch (SQLConnectionException e) {
 			new PopupUI(e.toString(), e.getMessage());
 			frame.dispose();
@@ -100,7 +100,7 @@ public class DatabaseUI extends JFrame {
 		});
 	}
 	
-	private String[] getStoreAddresses() throws SQLConnectionException, SQLException {
+	private String[] dbQueryStoreAddresses() throws SQLConnectionException, SQLException {
 		ResultSet rs = db.runQueryString("SELECT address FROM Stores");
 		String[] addresses = resultSetCol(rs, 1);
 		return addresses;

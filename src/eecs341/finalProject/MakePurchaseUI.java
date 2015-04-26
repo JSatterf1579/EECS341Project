@@ -92,7 +92,7 @@ public class MakePurchaseUI extends JFrame {
 				} finally {
 					item.setText("");
 				}
-				addItem(itemID);
+				callbackAddItem(itemID);
 			}
 		});
 		
@@ -126,7 +126,7 @@ public class MakePurchaseUI extends JFrame {
 		});
 	}
 	
-	public void addItem(int itemID) {
+	public void callbackAddItem(int itemID) {
 		try {
 			String itemName;
 			double currentPrice;
@@ -150,13 +150,13 @@ public class MakePurchaseUI extends JFrame {
 		}
 	}
 	
-	public void addPrescription(int prescriptionID) {
+	public void callbackUsePrescription(int prescriptionID) {
 		ResultSet rs;
 		try {
 			rs = db.runQueryString("SELECT prescriptionID, itemID FROM Prescription WHERE prescriptionID = " + prescriptionID);
 			if (rs.next()) {
 				int itemID = Integer.parseInt(rs.getString(2));
-				addItem(itemID);
+				callbackAddItem(itemID);
 				if (rs.next()) {
 					new PopupUI("Prescription collision", "The prescription ID " + prescriptionID + " was found more than once in the database.");
 				}
@@ -173,7 +173,7 @@ public class MakePurchaseUI extends JFrame {
 		
 	}
 	
-	protected void doneCheckout() {
+	protected void callbackDoneCheckout() {
 		frame.dispose();
 	}
 

@@ -11,7 +11,6 @@ public class CheckoutUI extends JFrame {
 	private JFrame frame = this;
 	
 	private DefaultListModel<String> listModel;
-	private String memberID;
 	private JTextField member = new JTextField();
 	private JFrame parent;
 	private SQLConnection db;
@@ -32,14 +31,12 @@ public class CheckoutUI extends JFrame {
 		frame.setTitle("Checkout");
 		JList<String> itemList = new JList<String>(listModel);
 		JTextArea memberLabel = new JTextArea("Member ID: ");
-		JButton addMember = new JButton("Submit");
 		JButton createMember = new JButton("Create JMJ");
 		JButton back = new JButton("Back");
 		JButton checkout = new JButton("Checkout");
 		
 		memberLabel.setBounds(200, 10, 90, 20);
 		member.setBounds(200, 40, 90, 20);
-		addMember.setBounds(200, 70, 90, 20);
 		createMember.setBounds(200, 100, 90, 20);
 		itemList.setBounds(10, 10, 180, 300);
 		back.setBounds(10, 320, 90, 50);
@@ -52,7 +49,6 @@ public class CheckoutUI extends JFrame {
 		
 		frame.add(member);
 		frame.add(memberLabel);
-		frame.add(addMember);
 		frame.add(createMember);
 		frame.add(itemList);
 		frame.add(back);
@@ -63,15 +59,9 @@ public class CheckoutUI extends JFrame {
 		frame.getContentPane().setBackground(Color.white);
 		frame.setVisible(true);
 		
-		addMember.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				setMemberID(member.getText());
-			}
-		});
-		
 		createMember.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new MakeMemberUI(listModel);
+				new MakeMemberUI(CheckoutUI.this, db);
 			}
 		});
 		
@@ -83,20 +73,15 @@ public class CheckoutUI extends JFrame {
 		
 		checkout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO: SQL CREATE PURCHASE
+				//db.runUpdateString("INSERT ")
 				frame.dispose();
-				((MakePurchaseUI)parent).doneCheckout();
+				((MakePurchaseUI)parent).callbackDoneCheckout();
 			}
 		});
 	}
 
-	public String getMemberID() {
-		return memberID;
-	}
-
-	public void setMemberID(String memberID) {
-		this.memberID = memberID;
-		member.setText(memberID);
+	public void callbackSetMemberID(int memberID) {
+		member.setText(Integer.toString(memberID));
 	}
 
 }
