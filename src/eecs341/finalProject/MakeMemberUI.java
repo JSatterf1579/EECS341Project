@@ -2,6 +2,7 @@ package eecs341.finalProject;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.*;
@@ -68,8 +69,14 @@ public class MakeMemberUI extends JFrame {
 				String phone = phoneField.getText();
 				int memberID;
 				try {
-					memberID = db.runUpdateString("INSERT INTO AwardsClubMember (name, address, phoneNumber, credits)"
-							                    + "VALUES ('" + name + "', '" + address + "', '" + phone + "', " + 0 + ")");
+					db.runUpdateString("INSERT INTO AwardsClubMember (name, address, phoneNumber, credits)"
+							         + "VALUES ('" + name + "', '" + address + "', '" + phone + "', " + 0 + ")");
+					ResultSet rs = db.runQueryString("SELECT LAST_INSERT_ID()");
+					if (rs.next()) {
+						memberID = Integer.parseInt(rs.getString(1));
+					} else {
+						throw new SQLException("The member added successfully, but there was a problem getting the automatically assigned ID");
+					}
 				} catch (SQLConnectionException e) {
 					new PopupUI(e.toString(), e.getMessage());
 					return;
