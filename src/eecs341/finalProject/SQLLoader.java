@@ -27,8 +27,10 @@ public class SQLLoader {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		System.out.println("Data generation system for chain of stores");
 		System.out.println("1 for manufacturers \n 2 for Members \n 3 for products \n 4 for Scripts"
-				+ "\n 5 for Filling locations \n 6 for Amounts Stocked");
+				+ "\n 5 for Filling locations \n 6 for Amounts Stocked \n"
+				+ "7 for Purchases \n 8 for PurchasedAt \n 9 for ItemsPurchased");
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String input = "";
 		try {
@@ -51,6 +53,12 @@ public class SQLLoader {
 			loadFilledAt(conn);
 		case "6":
 			loadStocked(conn);
+		case "7":
+			loadPurchases(conn);
+		case "8":
+			loadPurchasedAt(conn);
+		case "9":
+			loadItemsPurchased(conn);
 		}
 		
 		
@@ -334,6 +342,108 @@ public class SQLLoader {
 			} catch (SQLConnectionException | SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void loadPurchases (SQLConnection conn) {
+		String queryString = "Insert into Purchase (purchaseDate, amountCharged, paymentType, memberID) \n"
+				+ "values (?, ?, ?, ?)";
+		String[] payments = {"Cash", "Credit", "Check"};
+		for(int i = 0; i < 250; i++){
+		try {
+			Connection c1 = conn.getActiveConnection();
+			PreparedStatement p1 = c1.prepareStatement(queryString);
+			p1.setDate(1, new Date(Calendar.getInstance().getTimeInMillis() - (long)(Math.random() * 2628000000L)));
+			p1.setString(2, Double.toString(Math.round(200*Math.random() * 100.0) / 100.0));
+			p1.setString(3, payments[(int)(Math.random()*3)]);
+			if(i % 7 == 0) {
+				p1.setInt(4, (int)(Math.random()*40) + 1);
+			} else {
+				p1.setNull(4, java.sql.Types.INTEGER);
+			}
+			p1.executeUpdate();
+		} catch (SQLConnectionException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}
+	}
+	
+	public static void loadPurchasedAt (SQLConnection conn) {
+		String purchasesQuery = "Select purchaseID from Purchase";
+		String storeQuery = "Select storeID from Stores";
+		String paQuery  = "Insert into PurchasedAt \n"
+				+ "Values (?, ?)";
+		Integer[] purchaseIDs = getAllValues(purchasesQuery, "purchaseID", conn);
+		Integer[] storeIDs = getAllValues(storeQuery, "storeID", conn);
+		
+		for(int i : purchaseIDs) {
+			Connection c1;
+			try {
+				c1 = conn.getActiveConnection();
+				PreparedStatement p1 = c1.prepareStatement(paQuery);
+				p1.setInt(2, storeIDs[(int)(Math.random() * storeIDs.length)]);
+				p1.setInt(1, i);
+				p1.executeUpdate();
+				
+			} catch (SQLConnectionException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+	}
+	
+	public static void loadItemsPurchased (SQLConnection conn) {
+		String purchasesQuery = "Select purchaseID from Purchase";
+		String itemsQuery = "Select itemID from Items";
+		String ipQuery = "Insert into ItemsPurchased \n"
+				+ "Values(?, ?, ?)";
+		Integer[] purchaseIDs = getAllValues(purchasesQuery, "purchaseID", conn);
+		Integer[] itemIDs = getAllValues(itemsQuery, "itemID", conn);
+		
+		for(int i: purchaseIDs) {
+			try {
+				Connection c1 = conn.getActiveConnection();
+				PreparedStatement p1 = c1.prepareStatement(ipQuery);
+				
+				p1.setInt(1, i);
+				
+				int items = (int)(Math.random() * 3) + 3;
+				for(int j = 0; j < items; j++) {
+					p1.setInt(2, itemIDs[(int)(Math.random() * itemIDs.length)]);
+					p1.setInt(3, (int)(Math.random()* 5) + 1);
+					p1.executeUpdate();
+				}
+			} catch (SQLConnectionException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void loadPrescriptionFilled (SQLConnection conn) {
+		String purchasesQuery = "Select purchaseID from Purchase";
+		String medsQuery = "Select prescriptionID from Prescripion";
+		String pfQuery = "Insert into PrescriptionFilled \n"
+				+ "values (?, ?)";
+		Integer[] purchaseIDs = getAllValues(purchasesQuery, "purchaseID", conn);
+		Integer[] medIDs = getAllValues(medsQuery, "prescriptionID", conn);
+		
+		for(int i: purchaseIDs) {
+			if(i % 7 == 0) {
+				try {
+					Connection c1 = conn.getActiveConnection();
+					PreparedStatement p1 = c1.prepareStatement(pfQuery);
+					p1.setInt(1, i);
+					p1.setInt(2, medIDs[(int)(Math.random()* medIDs.length)]);
+					p1.executeUpdate();
+					
+				} catch (SQLConnectionException | SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
