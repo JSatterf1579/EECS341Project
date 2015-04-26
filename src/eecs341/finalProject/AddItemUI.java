@@ -2,6 +2,8 @@ package eecs341.finalProject;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -18,7 +20,6 @@ public class AddItemUI extends JFrame {
 	private ArrayList<JComponent> temporaryUIElements = new ArrayList<>();
 	
 	// Common fields
-	JTextField itemIDField = null;
 	JTextField nameField = null;
 	JTextField supplierIDField = null;
 	JTextField priceField = null;
@@ -49,8 +50,6 @@ public class AddItemUI extends JFrame {
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Add Item");
 		
-		JTextArea itemIDLabel = new JTextArea("Item ID:");
-		itemIDField = new JTextField();
 		JTextArea nameLabel = new JTextArea("Name:");
 		nameField = new JTextField();
 		JTextArea supplierIDLabel = new JTextArea("Supplier ID:");
@@ -63,8 +62,6 @@ public class AddItemUI extends JFrame {
 
 		
 		dropDown.setBounds(50, 20, 200, 20);
-		itemIDLabel.setBounds(20, 60, 120, 20);
-		itemIDField.setBounds(160, 60, 120, 20);
 		nameLabel.setBounds(20, 100, 120, 20);
 		nameField.setBounds(160, 100, 120, 20);
 		supplierIDLabel.setBounds(20, 140, 120, 20);
@@ -74,14 +71,11 @@ public class AddItemUI extends JFrame {
 		add.setBounds(200, 330, 90, 40);
 		back.setBounds(10, 330, 90, 40);
 		
-		itemIDLabel.setEditable(false);
 		nameLabel.setEditable(false);
 		supplierIDLabel.setEditable(false);
 		priceLabel.setEditable(false);
 		
 		frame.add(dropDown);
-		frame.add(itemIDLabel);
-		frame.add(itemIDField);
 		frame.add(nameLabel);
 		frame.add(nameField);
 		frame.add(supplierIDLabel);
@@ -122,8 +116,67 @@ public class AddItemUI extends JFrame {
 		});
 		
 		add.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// TODO: SQL ADD ITEM TO DATABASE
+			public void actionPerformed(ActionEvent event) {
+				String name = nameField.getText();
+				int supplierID;
+				double currentPrice;
+				int itemID;
+				try {
+					supplierID = Integer.parseInt(supplierIDField.getText());
+				} catch (NumberFormatException e) {
+					new PopupUI(e.toString(), e.getMessage());
+					return;
+				}
+				try {
+					currentPrice = Double.parseDouble(priceField.getText());
+				} catch (NumberFormatException e) {
+					new PopupUI(e.toString(), e.getMessage());
+					return;
+				}
+				try {
+					db.runUpdateString("INSERT INTO Items ( name, supplierID, currentPrice )"
+							         + "VALUES ( '" + name + "', " + supplierID + ", " + currentPrice + " )");
+					ResultSet rs = db.runQueryString("SELECT LAST_INSERT_ID()");
+					if (rs.next()) {
+						itemID = Integer.parseInt(rs.getString(1));
+					} else {
+						throw new SQLException("The item added successfully, but there was a problem getting the automatically assigned ID");
+					}
+					String brand;
+					String scientificName;
+					String manufacturer;
+					String strength;
+					String expirationDate;
+					switch ((String)dropDown.getSelectedItem()) {
+					case "Home Item":
+						brand = brandField.getText();
+						db.runUpdateString("INSERT INTO HomeItems ( itemID, brand )"
+				                         + "VALUES ( " + itemID + ", '" + brand + "' )");
+						break;
+					case "Medicine":
+						scientificName = scientificNameField.getText();
+						manufacturer = manufacturerField.getText();
+						strength = strengthField.getText();
+						db.runUpdateString("INSERT INTO Medicine ( itemID, scientificName, manufacturer, strength )"
+		                                 + "VALUES ( " + itemID + ", '" + scientificName + "', '" + manufacturer + "', '" + strength + "' )");
+						break;
+					case "Food":
+						brand = brandField.getText();
+						expirationDate = expirationField.getText();
+						db.runUpdateString("INSERT INTO Food ( itemID, brand, expirationDate )"
+                                         + "VALUES ( " + itemID + ", '" + brand + "', '" + expirationDate + "' )");
+						break;
+					default:
+						break;
+					}
+				} catch (SQLConnectionException e) {
+					new PopupUI(e.toString(), e.getMessage());
+					e.printStackTrace();
+					return;
+				} catch (SQLException e) {
+					new PopupUI(e.toString(), e.getMessage());
+					return;
+				}
 				frame.dispose();
 			}
 		});
