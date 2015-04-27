@@ -65,7 +65,7 @@ public class LookupItemUI extends JFrame {
 				int supplierID;
 				double currentPrice;
 				try {
-					ResultSet rs = db.runQueryString("SELECT itemID, name, supplierID, currentPrice FROM Items WHERE itemID = " + itemID);
+					ResultSet rs = db.runQueryString("SELECT i.itemID, i.name, i.supplierID, i.currentPrice FROM Items as i, AmountStocked as s WHERE i.itemID = s.itemID && s.storeID = " + storeID + " && i.itemID = " + itemID);
 					if (rs.next()) {
 						itemName = rs.getString(2);
 						supplierID = Integer.parseInt(rs.getString(3));
@@ -75,7 +75,7 @@ public class LookupItemUI extends JFrame {
 							new PopupUI("Item collision", "The item ID you entered, " + itemID + ", was found more than once in the database.");
 						}
 					} else {
-						new PopupUI("Item not found", "The item ID you entered, " + itemID + ", was not found in the database.");
+						new PopupUI("Item not found", "The item ID you entered, " + itemID + ", was not found in this store.");
 					}
 				} catch (SQLConnectionException e) {
 					new PopupUI(e.toString(), e.getMessage());
