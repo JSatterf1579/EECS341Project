@@ -21,6 +21,7 @@ public class MakePurchaseUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JFrame frame = this;
 	protected DefaultListModel<String> itemListModel;
+	private DefaultListModel<String> prescriptionListModel = new DefaultListModel<String>();
 	protected SQLConnection db;
 	private JFrame parent;
 	private List<Integer> prescriptionIDs;
@@ -53,7 +54,6 @@ public class MakePurchaseUI extends JFrame {
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Make Purchase");
 		JList<String> itemList = new JList<String>(itemListModel);
-		DefaultListModel<String> prescriptionListModel = new DefaultListModel<String>();
 		JList<String> prescriptionList = new JList<String>(prescriptionListModel);
 		JTextField item = new JTextField();
 		JTextArea itemlabel = new JTextArea("Item ID: ");
@@ -65,7 +65,7 @@ public class MakePurchaseUI extends JFrame {
 		JButton back = new JButton("Back");
 		JButton checkout = new JButton("Checkout...");
 		
-		prescriptionList.setBounds(10, 170, 375, 150);
+		prescriptionList.setBounds(10, 170, 350, 150);
 		prescriptionList.setFont(new Font("monospaced", Font.PLAIN, 12));
 		prescriptionList.setBorder(BorderFactory.createLineBorder(Color.black));
 		
@@ -76,6 +76,7 @@ public class MakePurchaseUI extends JFrame {
 		addPrescription.setBounds(375, 260, 90, 20);
 		frame.add(prescriptionLabel);
 		frame.add(prescription);
+		frame.add(prescriptionList);
 		
 		itemlabel.setBounds(375, 10, 90, 20);
 		item.setBounds(375, 40, 90, 20);
@@ -222,7 +223,7 @@ public class MakePurchaseUI extends JFrame {
 					itemName = rs.getString(2);
 					currentPrice = Double.parseDouble(rs.getString(3));
 					itemsToPurchase.add(new PurchaseListEntry(itemID, itemName, currentPrice, amountGiven));
-					itemListModel.addElement(String.format("%3s  %25s  $%2.2f %4d",itemID, itemName, currentPrice, amountGiven));
+					prescriptionListModel.addElement(String.format("%3s  %25s  $%2.2f %4d",itemID, itemName, currentPrice, amountGiven));
 					if (rs.next()) {
 						new PopupUI("Item collision", "The item ID " + preID + " was found more than once in the database.");
 					}
