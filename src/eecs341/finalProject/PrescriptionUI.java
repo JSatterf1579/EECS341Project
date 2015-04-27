@@ -101,6 +101,8 @@ public class PrescriptionUI extends JFrame {
 				int prescriptionID;
 				try {
 					prescriptionID = dbInsertNewPrescription(itemID, prescriberName, amount, unit, frequency);
+					db.runUpdateString("INSERT INTO FilledAt (storeID, prescriptionID)"
+							         + "VALUES ( " + storeID + ", " + prescriptionID + " )");
 				} catch (SQLConnectionException e) {
 					new PopupUI(e.toString(), e.getMessage());
 					return;

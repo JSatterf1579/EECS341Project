@@ -122,8 +122,4 @@ public class DatabaseUI extends JFrame {
 		}
 		return result.toArray(new String[result.size()]);
 	}
-
-	public static void main(String[] args) {
-		new DatabaseUI();
-	}
 }
