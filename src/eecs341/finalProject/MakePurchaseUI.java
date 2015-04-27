@@ -53,15 +53,25 @@ public class MakePurchaseUI extends JFrame {
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Make Purchase");
 		JList<String> itemList = new JList<String>(itemListModel);
+		DefaultListModel<String> prescriptionListModel = new DefaultListModel<String>();
+		JList<String> prescriptionList = new JList<String>(prescriptionListModel);
 		JTextField item = new JTextField();
 		JTextArea itemlabel = new JTextArea("Item ID: ");
 		JTextField itemQuantity = new JTextField();
 		JTextArea itemQuantityLabel = new JTextArea("Quantity: ");
 		JButton addItem = new JButton("Add Item");
 		JButton removeItem = new JButton("Remove Item");
-		JButton addPrescription = new JButton("Prescription");
+		JButton addPrescription = new JButton("Add");
 		JButton back = new JButton("Back");
 		JButton checkout = new JButton("Checkout...");
+		
+		JTextArea prescriptionLabel = new JTextArea("Prescription:");
+		JTextField prescription = new JTextField();
+		prescriptionLabel.setBounds(375, 200, 90, 20);
+		prescription.setBounds(375, 230, 90, 20);
+		addPrescription.setBounds(375, 260, 90, 20);
+		frame.add(prescriptionLabel);
+		frame.add(prescription);
 		
 		itemlabel.setBounds(375, 10, 90, 20);
 		item.setBounds(375, 40, 90, 20);
@@ -70,7 +80,6 @@ public class MakePurchaseUI extends JFrame {
 		addItem.setBounds(375, 130, 90, 20);
 		removeItem.setBounds(375, 160, 90, 20);
 		itemList.setBounds(10, 10, 350, 300);
-		addPrescription.setBounds(190, 320, 120, 50);
 		back.setBounds(10, 320, 120, 50);
 		checkout.setBounds(370, 320, 120, 50);
 		
@@ -133,9 +142,23 @@ public class MakePurchaseUI extends JFrame {
 		});
 		
 		addPrescription.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new PrescriptionUI(MakePurchaseUI.this, db, storeID);
+			public void actionPerformed(ActionEvent event) {
+				int preID;
+				try {
+					preID = Integer.parseInt(item.getText());
+				} catch (NumberFormatException e) {
+					new PopupUI("Bad prescription ID", "The item prescription ID must be an integer.");
+					return;
+				} finally {
+					item.setText("");
+				}
+				callbackAddPrescription(preID);
 			}
+//			public void actionPerformed(ActionEvent e) {
+//				// NOT ANYMORE
+//				
+//				new PrescriptionUI(MakePurchaseUI.this, db, storeID);
+//			}
 		});
 		
 		checkout.addActionListener(new ActionListener() {
@@ -166,6 +189,30 @@ public class MakePurchaseUI extends JFrame {
 				}
 			} else {
 				new PopupUI("Item not found", "The item ID you entered, " + itemID + ", was not found in the database.");
+			}
+		} catch (SQLConnectionException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		} catch (SQLException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		} catch (NumberFormatException e) {
+			new PopupUI(e.toString(), e.getMessage());
+		}
+	}
+	public void callbackAddPrescription(int preID) {
+		try {
+			String itemName;
+			double currentPrice;
+			ResultSet rs = db.runQueryString("SELECT itemID, name, currentPrice FROM Items WHERE itemID = " + preID);
+			if (rs.next()) {
+				itemsToPurchase.add(new PurchaseListEntry(preID, rs.getString(2), Double.parseDouble(rs.getString(3)), itemQuant));
+				itemName = rs.getString(2);
+				currentPrice = Double.parseDouble(rs.getString(3));
+				itemListModel.addElement(String.format("%3s  %25s  $%2.2f %4d",preID, itemName, currentPrice, fillingFrequency));
+				if (rs.next()) {
+					new PopupUI("Item collision", "The item ID you entered, " + preID + ", was found more than once in the database.");
+				}
+			} else {
+				new PopupUI("Item not found", "The item ID you entered, " + preID + ", was not found in the database.");
 			}
 		} catch (SQLConnectionException e) {
 			new PopupUI(e.toString(), e.getMessage());
