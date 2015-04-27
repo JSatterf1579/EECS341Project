@@ -99,6 +99,7 @@ public class CheckoutUI extends JFrame {
 				String quantityAdd = "UPDATE AmountStocked SET quantityStocked = quantityStocked + ? where itemID = ? and storeID = ?";
 				String scriptFillCheck = "SELECT * from FilledAt where storeID = ? and prescriptionID = ?";
 				String scriptFilledInsert = "INSERT INTO PrescriptionFilled VALUES (?, ?)";
+				String memberPointsUpdate = "UPDATE AwardsClubMember SET credits = credits + ? WHERE memberID = ?";
 				boolean transactionSuccessful = true;
 				Connection con = null;
 				Savepoint rollback = null;
@@ -192,6 +193,13 @@ public class CheckoutUI extends JFrame {
 						insertScriptFill.setInt(2, prescriptionID);
 						insertScriptFill.executeQuery();
 					}
+					
+					if(memberID != null){
+						PreparedStatement pointsStmt = con.prepareStatement(memberPointsUpdate);
+						pointsStmt.setInt(1, (int)(price / 10));
+						pointsStmt.setInt(2, memberID);
+					}
+					
 					if(transactionSuccessful) {
 						con.commit();
 					} else {
