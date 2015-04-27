@@ -2,6 +2,7 @@ package eecs341.finalProject;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class AddItemUI extends JFrame {
 	JTextField nameField = null;
 	JTextField supplierIDField = null;
 	JTextField priceField = null;
+	JTextField stockField = null;
 	
 	// Home Item fields
 	JTextField brandField = null;
@@ -58,6 +60,8 @@ public class AddItemUI extends JFrame {
 		supplierIDField = new JTextField();
 		JTextArea priceLabel = new JTextArea("Price:");
 		priceField = new JTextField();
+		JTextArea stockLabel = new JTextArea("Amount Stocked:");
+		stockField = new JTextField();
 
 		JButton back = new JButton("Back");
 		JButton add = new JButton("Add");
@@ -70,8 +74,11 @@ public class AddItemUI extends JFrame {
 		supplierIDField.setBounds(160, 140, 120, 20);
 		priceLabel.setBounds(20, 180, 120, 20);
 		priceField.setBounds(160, 180, 120, 20);
-		add.setBounds(200, 330, 90, 40);
-		back.setBounds(10, 330, 90, 40);
+		stockLabel.setBounds(20, 350, 120, 20);
+		stockField.setBounds(160, 350, 120, 20);
+		
+		add.setBounds(200, 390, 90, 40);
+		back.setBounds(10, 390, 90, 40);
 		
 		nameLabel.setEditable(false);
 		supplierIDLabel.setEditable(false);
@@ -84,10 +91,12 @@ public class AddItemUI extends JFrame {
 		frame.add(supplierIDField);
 		frame.add(priceLabel);
 		frame.add(priceField);
+		frame.add(stockLabel);
+		frame.add(stockField);
 		frame.add(add);
 		frame.add(back);
 
-		frame.setSize(300, 400);
+		frame.setSize(300, 500);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.getContentPane().setBackground(Color.white);
@@ -171,6 +180,14 @@ public class AddItemUI extends JFrame {
 					default:
 						break;
 					}
+					
+					Integer quantityStocked = Integer.parseInt(stockField.getText());
+					String stockUpdate = "Insert into AmountStocked VALUES (?, ?, ?)";
+					PreparedStatement p1 = db.getActiveConnection().prepareStatement(stockUpdate);
+					p1.setInt(1, itemID);
+					p1.setInt(2, storeID);
+					p1.setInt(3, quantityStocked);
+					p1.executeUpdate();
 				} catch (SQLConnectionException e) {
 					new PopupUI(e.toString(), e.getMessage());
 					e.printStackTrace();

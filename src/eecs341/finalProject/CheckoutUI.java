@@ -164,7 +164,7 @@ public class CheckoutUI extends JFrame {
 					PreparedStatement purchaseInsertStmt = con.prepareStatement(insertPurchase, Statement.RETURN_GENERATED_KEYS);
 					purchaseInsertStmt.setDate(1, new Date(Calendar.getInstance().getTimeInMillis()));
 					purchaseInsertStmt.setString(2, Double.toString(price));
-					purchaseInsertStmt.setString(3, "Undetermined");
+					purchaseInsertStmt.setString(3, (String)dropDown.getSelectedItem());
 					if(memberID != null){
 						purchaseInsertStmt.setInt(4, memberID);
 					} else {
@@ -201,6 +201,7 @@ public class CheckoutUI extends JFrame {
 						PreparedStatement pointsStmt = con.prepareStatement(memberPointsUpdate);
 						pointsStmt.setInt(1, (int)(price / 10));
 						pointsStmt.setInt(2, memberID);
+						pointsStmt.executeUpdate();
 					}
 					
 					if(transactionSuccessful) {
