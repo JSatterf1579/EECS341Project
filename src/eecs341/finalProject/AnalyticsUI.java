@@ -214,9 +214,9 @@ public class AnalyticsUI extends JFrame {
 		query7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try {
-					PreparedStatement ps = db.getActiveConnection().prepareStatement("Select M.name, M.address "
-							+ "From AwardsClubMember M, Purchase as P, PurchasedAt as Q	"
-							+ "Where P.memberID = M.memberID and P.purchaseID = Q.purchaseID and Q.storeID = ?");
+					PreparedStatement ps = db.getActiveConnection().prepareStatement("Select p.prescriptionID, s.storeID, s.address "
+							+ "From Prescription as p, Stores as s, FilledAt as f "
+							+ "Where  p.prescriptionID = f.prescriptionID and s.storeID = f.storeID and s.storeID = ?");
 					ps.setInt(1, storeID);
 					ResultSet rs = ps.executeQuery();
 					new ResultUI(db, rs);
