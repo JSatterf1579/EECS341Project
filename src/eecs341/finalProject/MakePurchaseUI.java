@@ -65,6 +65,10 @@ public class MakePurchaseUI extends JFrame {
 		JButton back = new JButton("Back");
 		JButton checkout = new JButton("Checkout...");
 		
+		prescriptionList.setBounds(10, 170, 375, 150);
+		prescriptionList.setFont(new Font("monospaced", Font.PLAIN, 12));
+		prescriptionList.setBorder(BorderFactory.createLineBorder(Color.black));
+		
 		JTextArea prescriptionLabel = new JTextArea("Prescription:");
 		JTextField prescription = new JTextField();
 		prescriptionLabel.setBounds(375, 200, 90, 20);
@@ -79,7 +83,7 @@ public class MakePurchaseUI extends JFrame {
 		itemQuantity.setBounds(375, 100, 90, 20);
 		addItem.setBounds(375, 130, 90, 20);
 		removeItem.setBounds(375, 160, 90, 20);
-		itemList.setBounds(10, 10, 350, 300);
+		itemList.setBounds(10, 10, 350, 150);
 		back.setBounds(10, 320, 120, 50);
 		checkout.setBounds(370, 320, 120, 50);
 		
