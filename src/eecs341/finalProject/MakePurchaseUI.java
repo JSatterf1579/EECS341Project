@@ -111,7 +111,7 @@ public class MakePurchaseUI extends JFrame {
 				try {
 					itemQuant = Integer.parseInt(itemQuantity.getText());
 				} catch (NumberFormatException e) {
-					new PopupUI("Bad Quantity", "The quantity specified must be a whole number");
+					new PopupUI("Bad Quantity", "The item quantity specified must be an integer.");
 					return;
 				} finally {
 					itemQuantity.setText("");

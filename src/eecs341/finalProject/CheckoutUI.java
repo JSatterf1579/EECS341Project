@@ -94,6 +94,9 @@ public class CheckoutUI extends JFrame {
 				String insertItemPurchased = "INSERT INTO ItemsPurchased \n"
 						+ "VALUE (?, ?, ?)";
 				String quantityQuery = "SELECT quantityStocked FROM AmountStocked WHERE itemID = ? and storeID = ?";
+				String quantityReduce = "UPDATE AmountStocked SET quantityStocked = quantityStocked - ? where itemID = ? and storeID = ?";
+				String quantityAdd = "UPDATE AmountStocked SET quantityStocked = quantityStocked + ? where itemID = ? and storeID = ?";
+				String scriptFillCheck = "SELECT * from FilledAt where storeID = ? and prescriptionID = ?";
 				boolean transactionSuccessful = true;
 				Connection con = null;
 				Savepoint rollback = null;
@@ -106,10 +109,24 @@ public class CheckoutUI extends JFrame {
 					for(PurchaseListEntry p : itemsToBuy) {
 						price += p.price;
 					}
-					
+					PreparedStatement scriptCheckStmt = con.prepareStatement(scriptFillCheck);
+					for(Integer i: prescriptionIDs) {
+						scriptCheckStmt.setInt(1, storeID);
+						scriptCheckStmt.setInt(2, i);
+						ResultSet rs = scriptCheckStmt.executeQuery();
+						if(rs != null && rs.next()) {
+							continue;
+						} else {
+							new PopupUI("Purchase failed", "Prescription " + i + " not available at this store");
+							return;
+						}
+					}
+					int stockQuantity = 0;
 					PreparedStatement stockAmountStmt = con.prepareStatement(quantityQuery);
+					PreparedStatement stockLowerStmt = con.prepareStatement(quantityReduce);
+					PreparedStatement stockRaiseStmt = con.prepareStatement(quantityAdd);
 					for(PurchaseListEntry p : itemsToBuy) {
-						int stockQuantity = 0;
+						stockQuantity = 0;
 						stockAmountStmt.setInt(1, p.itemID);
 						stockAmountStmt.setInt(2, storeID);
 						ResultSet quantity = stockAmountStmt.executeQuery();
@@ -120,7 +137,11 @@ public class CheckoutUI extends JFrame {
 							return;
 						}
 						if(stockQuantity >= p.quantityBought){
-							stockQuantity = stockQuantity;
+							stockLowerStmt.setInt(1, p.quantityBought);
+							stockLowerStmt.setInt(2, p.itemID);
+							stockLowerStmt.setInt(3, storeID);
+							stockLowerStmt.executeQuery();
+							
 						} else {
 							new PopupUI("Purchase Failed", "Store only has " + stockQuantity + " of " + p.name);
 							return;
@@ -151,6 +172,12 @@ public class CheckoutUI extends JFrame {
 						insertItemStmt.setInt(2, p.itemID);
 						insertItemStmt.setInt(3, p.quantityBought);
 						insertItemStmt.executeUpdate();
+						if(stockQuantity - p.quantityBought < 5) {
+							stockRaiseStmt.setInt(1, 20);
+							stockRaiseStmt.setInt(2, p.itemID);
+							stockRaiseStmt.setInt(3, storeID);
+							stockRaiseStmt.executeUpdate();
+						}
 					}
 					for (int prescriptionID : prescriptionIDs) {
 /*						db.runUpdateString("INSERT INTO PrescriptionFilled (purchaseID, prescriptionID)"
