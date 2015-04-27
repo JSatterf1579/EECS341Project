@@ -98,13 +98,18 @@ public class CheckoutUI extends JFrame {
 				String quantityReduce = "UPDATE AmountStocked SET quantityStocked = quantityStocked - ? where itemID = ? and storeID = ?";
 				String quantityAdd = "UPDATE AmountStocked SET quantityStocked = quantityStocked + ? where itemID = ? and storeID = ?";
 				String scriptFillCheck = "SELECT * from FilledAt where storeID = ? and prescriptionID = ?";
+				String scriptFilledInsert = "INSERT INTO PrescriptionFilled VALUES (?, ?)";
 				boolean transactionSuccessful = true;
 				Connection con = null;
 				Savepoint rollback = null;
 				Integer memberID = null;
 				try {
 					Integer key = null;
-					memberID = Integer.parseInt(memberField.getText());
+					try{
+						memberID = Integer.parseInt(memberField.getText());
+					} catch (NumberFormatException e1) {
+						memberID = null;
+					}
 					con = db.getActiveConnection();
 					double price = 0d;
 					for(PurchaseListEntry p : itemsToBuy) {
@@ -138,11 +143,12 @@ public class CheckoutUI extends JFrame {
 							return;
 						}
 						if(stockQuantity >= p.quantityBought){
-							stockLowerStmt.setInt(1, p.quantityBought);
-							stockLowerStmt.setInt(2, p.itemID);
-							stockLowerStmt.setInt(3, storeID);
-							stockLowerStmt.executeQuery();
-							
+							if(stockQuantity - p.quantityBought < 5) {
+								stockRaiseStmt.setInt(1, 20);
+								stockRaiseStmt.setInt(2, p.itemID);
+								stockRaiseStmt.setInt(3, storeID);
+								stockRaiseStmt.executeUpdate();
+							}
 						} else {
 							new PopupUI("Purchase Failed", "Store only has " + stockQuantity + " of " + p.name);
 							return;
@@ -173,16 +179,16 @@ public class CheckoutUI extends JFrame {
 						insertItemStmt.setInt(2, p.itemID);
 						insertItemStmt.setInt(3, p.quantityBought);
 						insertItemStmt.executeUpdate();
-						if(stockQuantity - p.quantityBought < 5) {
-							stockRaiseStmt.setInt(1, 20);
-							stockRaiseStmt.setInt(2, p.itemID);
-							stockRaiseStmt.setInt(3, storeID);
-							stockRaiseStmt.executeUpdate();
-						}
+						stockLowerStmt.setInt(1, p.quantityBought);
+						stockLowerStmt.setInt(2, p.itemID);
+						stockLowerStmt.setInt(3, storeID);
+						stockLowerStmt.executeUpdate();
 					}
+					PreparedStatement insertScriptFill = con.prepareStatement(scriptFilledInsert);
 					for (int prescriptionID : prescriptionIDs) {
-/*						db.runUpdateString("INSERT INTO PrescriptionFilled (purchaseID, prescriptionID)"
-	         	                         + "VALUES (" + purchaseID + ", " + prescriptionID + ")");*/
+						insertScriptFill.setInt(1, key);
+						insertScriptFill.setInt(2, prescriptionID);
+						insertScriptFill.executeQuery();
 					}
 					if(transactionSuccessful) {
 						con.commit();
@@ -207,16 +213,7 @@ public class CheckoutUI extends JFrame {
 					}
 					new PopupUI(e.toString(), e.getMessage());
 					return;
-				} catch (NumberFormatException e) {
-					try {
-						con.rollback(rollback);
-					} catch (SQLException e1) {
-						new PopupUI(e1.toString(), e1.getMessage());
-						e1.printStackTrace();
-					}
-					new PopupUI(e.toString(), e.getMessage());
-					return;
-				} finally {
+				}  finally {
 					try {
 						con.setAutoCommit(true);
 					} catch (SQLException e) {
