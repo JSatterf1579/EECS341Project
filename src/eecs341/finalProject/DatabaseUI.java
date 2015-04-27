@@ -6,6 +6,8 @@ import java.awt.event.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DatabaseUI extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -31,7 +33,7 @@ public class DatabaseUI extends JFrame {
 		frame.getContentPane().setLayout(null);
 		frame.setTitle("Dobis Database");
 		
-		String[] stores;
+		Map<String, Integer> stores;
 		try {
 			stores = dbQueryStoreAddresses();
 		} catch (SQLConnectionException e) {
@@ -44,7 +46,7 @@ public class DatabaseUI extends JFrame {
 			return;
 		}
 		
-		JComboBox<String> dropDown = new JComboBox<String>(stores);
+		JComboBox<String> dropDown = new JComboBox<String>(stores.keySet().toArray(new String[stores.size()]));
 		JButton controlStockButton = new JButton("Control Stock");
 		JButton makePurchaseButton = new JButton("Make Purchase");
 		JButton makePrescriptionButton = new JButton("Make Prescription");
@@ -72,18 +74,21 @@ public class DatabaseUI extends JFrame {
 		
 		controlStockButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new ControlStockUI(DatabaseUI.this, db);
+				int storeID = stores.get(dropDown.getSelectedItem().toString());
+				new ControlStockUI(DatabaseUI.this, db, storeID);
 			}
 		});
 		makePurchaseButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new MakePurchaseUI(DatabaseUI.this, db);
+				int storeID = stores.get(dropDown.getSelectedItem().toString());
+				new MakePurchaseUI(DatabaseUI.this, db, storeID);
 			}
 		});
 		
 		makePrescriptionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new PrescriptionUI(DatabaseUI.this, db);
+				int storeID = stores.get(dropDown.getSelectedItem().toString());
+				new PrescriptionUI(DatabaseUI.this, db, storeID);
 			}
 		});
 		
@@ -100,10 +105,13 @@ public class DatabaseUI extends JFrame {
 		});
 	}
 	
-	private String[] dbQueryStoreAddresses() throws SQLConnectionException, SQLException {
-		ResultSet rs = db.runQueryString("SELECT address FROM Stores");
-		String[] addresses = resultSetCol(rs, 1);
-		return addresses;
+	private Map<String, Integer> dbQueryStoreAddresses() throws SQLConnectionException, SQLException {
+		ResultSet rs = db.runQueryString("SELECT (storeID, address) FROM Stores");
+		Map<String, Integer> stores = new HashMap<String, Integer>();
+		while (rs.next()) {
+			stores.put(rs.getString(2), (int)rs.getShort(1));
+		}
+		return stores;
 	}
 	
 	private String[] resultSetCol(ResultSet rs, int col) throws SQLException {

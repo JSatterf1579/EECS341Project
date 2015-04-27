@@ -10,10 +10,12 @@ public class ControlStockUI extends JFrame {
 	private JFrame frame = this;
 	private JFrame parent;
 	private SQLConnection db;
+	private int storeID;
 
-	public ControlStockUI(JFrame parent, SQLConnection db) {
+	public ControlStockUI(JFrame parent, SQLConnection db, int storeID) {
 		this.parent = parent;
 		this.db = db;
+		this.storeID = storeID;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();
@@ -43,13 +45,13 @@ public class ControlStockUI extends JFrame {
 		
 		button1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new AddItemUI(ControlStockUI.this, db);
+				new AddItemUI(ControlStockUI.this, db, storeID);
 			}
 		});
 		
 		button2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new LookupItemUI(ControlStockUI.this, db);
+				new LookupItemUI(ControlStockUI.this, db, storeID);
 			}
 		});
 		

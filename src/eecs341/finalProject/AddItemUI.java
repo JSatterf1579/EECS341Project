@@ -14,6 +14,7 @@ public class AddItemUI extends JFrame {
 	private JFrame frame = this;
 	private JFrame parent;
 	private SQLConnection db;
+	private int storeID;
 	
 	private String[] itemTypes = {"None", "Home Item", "Medicine", "Food"};
 	private JComboBox<String> dropDown = new JComboBox<String>(itemTypes);
@@ -36,9 +37,10 @@ public class AddItemUI extends JFrame {
 	// duplicate brandField;
 	JTextField expirationField = null;
 	
-	public AddItemUI(JFrame parent, SQLConnection db) {
+	public AddItemUI(JFrame parent, SQLConnection db, int storeID) {
 		this.parent = parent;
 		this.db = db;
+		this.storeID = storeID;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();
@@ -279,3 +281,5 @@ public class AddItemUI extends JFrame {
 		temporaryUIElements = new ArrayList<JComponent>();
 	}
 }
+
+// TODO STORE

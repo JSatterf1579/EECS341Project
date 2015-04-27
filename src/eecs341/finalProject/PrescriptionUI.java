@@ -12,10 +12,12 @@ public class PrescriptionUI extends JFrame {
 	private JFrame frame = this;
 	private JFrame parent;
 	protected SQLConnection db;
+	private int storeID;
 
-	public PrescriptionUI(JFrame parent, SQLConnection db) {
+	public PrescriptionUI(JFrame parent, SQLConnection db, int storeID) {
 		this.parent = parent;
 		this.db = db;
+		this.storeID = storeID;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();
@@ -127,3 +129,5 @@ public class PrescriptionUI extends JFrame {
 		}
 	}
 }
+
+// TODO STORE

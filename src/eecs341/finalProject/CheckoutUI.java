@@ -19,12 +19,14 @@ public class CheckoutUI extends JFrame {
 	private JFrame parent;
 	private SQLConnection db;
 	private ArrayList<Integer> prescriptionIDs;
+	private int storeID;
 
-	public CheckoutUI(JFrame parent, SQLConnection db, DefaultListModel<String> listModel, ArrayList<Integer> prescriptionIDs) {
+	public CheckoutUI(JFrame parent, SQLConnection db, DefaultListModel<String> listModel, ArrayList<Integer> prescriptionIDs, int storeID) {
 		this.parent = parent;
 		this.db = db;
 		this.listModel = listModel;
 		this.prescriptionIDs = prescriptionIDs;
+		this.storeID = storeID;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();
@@ -143,3 +145,5 @@ public class CheckoutUI extends JFrame {
 	}
 
 }
+
+// TODO STORE

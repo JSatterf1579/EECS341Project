@@ -12,10 +12,12 @@ public class LookupItemUI extends JFrame {
 	private JFrame frame = this;
 	private JFrame parent;
 	private SQLConnection db;
+	private int storeID;
 	
-	public LookupItemUI(JFrame parent, SQLConnection db) {
+	public LookupItemUI(JFrame parent, SQLConnection db, int storeID) {
 		this.parent = parent;
 		this.db = db;
+		this.storeID = storeID;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				launchDisplay();
