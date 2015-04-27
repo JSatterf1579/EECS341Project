@@ -106,7 +106,7 @@ public class DatabaseUI extends JFrame {
 	}
 	
 	private Map<String, Integer> dbQueryStoreAddresses() throws SQLConnectionException, SQLException {
-		ResultSet rs = db.runQueryString("SELECT (storeID, address) FROM Stores");
+		ResultSet rs = db.runQueryString("SELECT storeID, address FROM Stores");
 		Map<String, Integer> stores = new HashMap<String, Integer>();
 		while (rs.next()) {
 			stores.put(rs.getString(2), (int)rs.getShort(1));
