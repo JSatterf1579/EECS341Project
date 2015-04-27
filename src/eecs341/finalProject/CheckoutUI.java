@@ -170,6 +170,8 @@ public class CheckoutUI extends JFrame {
 					ResultSet keySet = purchaseInsertStmt.getGeneratedKeys();
 					if(keySet != null && keySet.next()){
 						key = keySet.getInt(1);
+					} else {
+						transactionSuccessful = false;
 					}
 					
 					
@@ -194,6 +196,7 @@ public class CheckoutUI extends JFrame {
 						con.commit();
 					} else {
 						con.rollback(rollback);
+						new PopupUI("Checkout Failed", "Checkout could not be successfully completed. Please try again.");
 					}
 				} catch (SQLConnectionException e) {
 					try {

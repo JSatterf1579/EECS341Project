@@ -101,7 +101,7 @@ public class DatabaseUI extends JFrame {
 		
 		analyticsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new AnalyticsUI(DatabaseUI.this, db);
+				new AnalyticsUI(DatabaseUI.this, db, stores.get(dropDown.getSelectedItem().toString()));
 			}
 		});
 	}
