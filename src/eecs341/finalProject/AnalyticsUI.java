@@ -237,9 +237,8 @@ public class AnalyticsUI extends JFrame {
 							+ "From Stores as S, AmountStocked as q "
 							+ "Where S.storeID = q.storeID and q.itemID = ? and q.quantityStocked > 0 "
 							+ "and ? Between S.openTime And S.clostTime");
-					ps.setDate(2, new Date(Calendar.getInstance().getTimeInMillis()));
-					ResultSet rs = ps.executeQuery();
-					new ResultUI(db, rs);
+
+					new ItemSelectUI(AnalyticsUI.this, db, ps);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
