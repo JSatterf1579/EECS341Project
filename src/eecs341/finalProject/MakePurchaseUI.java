@@ -23,11 +23,13 @@ public class MakePurchaseUI extends JFrame {
 	protected SQLConnection db;
 	private JFrame parent;
 	private ArrayList<Integer> prescriptionIDs;
+	private int storeID;
 	
-	public MakePurchaseUI(JFrame parent, SQLConnection db) {
+	public MakePurchaseUI(JFrame parent, SQLConnection db, int storeID) {
 		itemListModel = new DefaultListModel<String>();
 		this.parent = parent;
 		this.db = db;
+		this.storeID = storeID;
 		prescriptionIDs = new ArrayList<Integer>();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -112,13 +114,13 @@ public class MakePurchaseUI extends JFrame {
 		
 		addPrescription.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new PrescriptionUI(MakePurchaseUI.this, db);
+				new PrescriptionUI(MakePurchaseUI.this, db, storeID);
 			}
 		});
 		
 		checkout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new CheckoutUI(MakePurchaseUI.this, db, itemListModel, prescriptionIDs);
+				new CheckoutUI(MakePurchaseUI.this, db, itemListModel, prescriptionIDs, storeID);
 			}
 		});
 		
