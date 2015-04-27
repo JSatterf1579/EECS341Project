@@ -3,7 +3,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -77,24 +79,58 @@ public class CheckoutUI extends JFrame {
 		
 		checkout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				boolean transactionSuccessful = true;
+				Connection con = null;
+				Savepoint rollback = null;
 				int memberID;
 				try {
 					memberID = Integer.parseInt(memberField.getText());
+					con = db.getActiveConnection();
+					rollback = con.setSavepoint();
+					db.getActiveConnection().setAutoCommit(false);
 					int purchaseID = db.runUpdateString("INSERT INTO Purchase (purchaseDate, amountCharged, paymentType, memberID)"
 						           	                  + "VALUES ('2011-04-12T00:00:00.000', -999, 'dummy_pmt_type', " + memberID + ")");
 					for (int prescriptionID : prescriptionIDs) {
 						db.runUpdateString("INSERT INTO PrescriptionFilled (purchaseID, prescriptionID)"
 	         	                         + "VALUES (" + purchaseID + ", " + prescriptionID + ")");
 					}
+					if(transactionSuccessful) {
+						con.commit();
+					}
 				} catch (SQLConnectionException e) {
+					try {
+						con.rollback(rollback);
+					} catch (SQLException e1) {
+						new PopupUI(e1.toString(), e1.getMessage());
+						e1.printStackTrace();
+					}
 					new PopupUI(e.toString(), e.getMessage());
 					return;
 				} catch (SQLException e) {
+					try {
+						con.rollback(rollback);
+					} catch (SQLException e1) {
+						new PopupUI(e1.toString(), e1.getMessage());
+						e1.printStackTrace();
+					}
 					new PopupUI(e.toString(), e.getMessage());
 					return;
 				} catch (NumberFormatException e) {
+					try {
+						con.rollback(rollback);
+					} catch (SQLException e1) {
+						new PopupUI(e1.toString(), e1.getMessage());
+						e1.printStackTrace();
+					}
 					new PopupUI(e.toString(), e.getMessage());
 					return;
+				} finally {
+					try {
+						con.setAutoCommit(true);
+					} catch (SQLException e) {
+						new PopupUI(e.toString(), e.getMessage());
+						return;
+					}
 				}
 				frame.dispose();
 				((MakePurchaseUI)parent).callbackDoneCheckout();
