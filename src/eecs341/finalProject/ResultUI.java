@@ -31,8 +31,11 @@ public class ResultUI extends JFrame {
 		
 		JTable resultTable = new JTable();
 		resultTable.setBounds(10,10,480,350);
-		frame.add(resultTable);
+		//frame.add(resultTable);
 		resultTable.setBorder(BorderFactory.createLineBorder(Color.black));
+		JScrollPane resultScroll = new JScrollPane(resultTable);
+		resultScroll.setBounds(10,10,480,350);
+		frame.add(resultScroll);
 		
 		try {
 			resultTable.setModel(buildTableModel(rs));
