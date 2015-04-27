@@ -145,7 +145,7 @@ public class MakePurchaseUI extends JFrame {
 			public void actionPerformed(ActionEvent event) {
 				int preID;
 				try {
-					preID = Integer.parseInt(item.getText());
+					preID = Integer.parseInt(prescription.getText());
 				} catch (NumberFormatException e) {
 					new PopupUI("Bad prescription ID", "The item prescription ID must be an integer.");
 					return;
@@ -200,19 +200,33 @@ public class MakePurchaseUI extends JFrame {
 	}
 	public void callbackAddPrescription(int preID) {
 		try {
+			int itemID;
+			int amountGiven;
 			String itemName;
 			double currentPrice;
-			ResultSet rs = db.runQueryString("SELECT itemID, name, currentPrice FROM Items WHERE itemID = " + preID);
+			ResultSet rs = db.runQueryString("SELECT prescriptionID, itemID, amountGiven"
+					                       + "FROM Prescription"
+					                       + "WHERE prescriptionID = " + preID);
 			if (rs.next()) {
-				itemsToPurchase.add(new PurchaseListEntry(preID, rs.getString(2), Double.parseDouble(rs.getString(3)), itemQuant));
-				itemName = rs.getString(2);
-				currentPrice = Double.parseDouble(rs.getString(3));
-				itemListModel.addElement(String.format("%3s  %25s  $%2.2f %4d",preID, itemName, currentPrice, fillingFrequency));
+				itemID = Integer.parseInt(rs.getString(2));
+				amountGiven = Integer.parseInt(rs.getString(3));
 				if (rs.next()) {
-					new PopupUI("Item collision", "The item ID you entered, " + preID + ", was found more than once in the database.");
+					new PopupUI("Prescription collision", "The prescription ID " + preID + " was found more than once in the database.");
+				}
+				rs = db.runQueryString("SELECT itemID, name, currentPrice FROM Items WHERE itemID = " + preID);
+				if (rs.next()) {
+					itemName = rs.getString(2);
+					currentPrice = Double.parseDouble(rs.getString(3));
+					itemsToPurchase.add(new PurchaseListEntry(itemID, itemName, currentPrice, amountGiven));
+					itemListModel.addElement(String.format("%3s  %25s  $%2.2f %4d",preID, itemName, currentPrice, amountGiven));
+					if (rs.next()) {
+						new PopupUI("Item collision", "The item ID " + preID + " was found more than once in the database.");
+					}
+				} else {
+					new PopupUI("Item not found", "The item ID " + preID + " was not found in the database.");
 				}
 			} else {
-				new PopupUI("Item not found", "The item ID you entered, " + preID + ", was not found in the database.");
+				new PopupUI("Prescription not found", "The prescription ID " + preID + " was not found in the database.");
 			}
 		} catch (SQLConnectionException e) {
 			new PopupUI(e.toString(), e.getMessage());
