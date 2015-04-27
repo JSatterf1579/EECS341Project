@@ -4,9 +4,14 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Savepoint;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.swing.*;
@@ -84,24 +89,77 @@ public class CheckoutUI extends JFrame {
 		
 		checkout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				//String insertPurchase
+				String insertPurchase = "INSERT INTO Purchase (purchaseDate, amountCharged, paymentType, memberID) \n"
+						+ "VALUES (?, ?, ?, ?)";
+				String insertItemPurchased = "INSERT INTO ItemsPurchased \n"
+						+ "VALUE (?, ?, ?)";
+				String quantityQuery = "SELECT quantityStocked FROM AmountStocked WHERE itemID = ? and storeID = ?";
 				boolean transactionSuccessful = true;
 				Connection con = null;
 				Savepoint rollback = null;
-				int memberID;
+				Integer memberID = null;
 				try {
+					Integer key = null;
 					memberID = Integer.parseInt(memberField.getText());
 					con = db.getActiveConnection();
+					double price = 0d;
+					for(PurchaseListEntry p : itemsToBuy) {
+						price += p.price;
+					}
+					
+					PreparedStatement stockAmountStmt = con.prepareStatement(quantityQuery);
+					for(PurchaseListEntry p : itemsToBuy) {
+						int stockQuantity = 0;
+						stockAmountStmt.setInt(1, p.itemID);
+						stockAmountStmt.setInt(2, storeID);
+						ResultSet quantity = stockAmountStmt.executeQuery();
+						if(quantity != null && quantity.next()) {
+							stockQuantity = quantity.getInt(1);
+						} else {
+							new PopupUI("Purchase Failed", "Store does not stock " + p.name);
+							return;
+						}
+						if(stockQuantity >= p.quantityBought){
+							stockQuantity = stockQuantity;
+						} else {
+							new PopupUI("Purchase Failed", "Store only has " + stockQuantity + " of " + p.name);
+							return;
+						}
+					}
+					
+					con.setAutoCommit(false);
 					rollback = con.setSavepoint();
-					db.getActiveConnection().setAutoCommit(false);
-/*					int purchaseID = db.runUpdateString("INSERT INTO Purchase (purchaseDate, amountCharged, paymentType, memberID)"
-						           	                  + "VALUES ('2011-04-12T00:00:00.000', -999, 'dummy_pmt_type', " + memberID + ")");*/
+					PreparedStatement purchaseInsertStmt = con.prepareStatement(insertPurchase, Statement.RETURN_GENERATED_KEYS);
+					purchaseInsertStmt.setDate(1, new Date(Calendar.getInstance().getTimeInMillis()));
+					purchaseInsertStmt.setString(2, Double.toString(price));
+					purchaseInsertStmt.setString(3, "Undetermined");
+					if(memberID != null){
+						purchaseInsertStmt.setInt(4, memberID);
+					} else {
+						purchaseInsertStmt.setNull(4, java.sql.Types.INTEGER);
+					}
+					purchaseInsertStmt.executeUpdate();
+					ResultSet keySet = purchaseInsertStmt.getGeneratedKeys();
+					if(keySet != null && keySet.next()){
+						key = keySet.getInt(1);
+					}
+					
+					
+					PreparedStatement insertItemStmt = con.prepareStatement(insertItemPurchased);
+					for(PurchaseListEntry p : itemsToBuy) {
+						insertItemStmt.setInt(1, key);
+						insertItemStmt.setInt(2, p.itemID);
+						insertItemStmt.setInt(3, p.quantityBought);
+						insertItemStmt.executeUpdate();
+					}
 					for (int prescriptionID : prescriptionIDs) {
 /*						db.runUpdateString("INSERT INTO PrescriptionFilled (purchaseID, prescriptionID)"
 	         	                         + "VALUES (" + purchaseID + ", " + prescriptionID + ")");*/
 					}
 					if(transactionSuccessful) {
 						con.commit();
+					} else {
+						con.rollback(rollback);
 					}
 				} catch (SQLConnectionException e) {
 					try {
