@@ -208,8 +208,8 @@ public class MakePurchaseUI extends JFrame {
 			int amountGiven;
 			String itemName;
 			double currentPrice;
-			ResultSet rs = db.runQueryString("SELECT prescriptionID, itemID, amountGiven"
-					                       + "FROM Prescription"
+			ResultSet rs = db.runQueryString("SELECT prescriptionID, itemID, amountGiven "
+					                       + "FROM Prescription "
 					                       + "WHERE prescriptionID = " + preID);
 			if (rs.next()) {
 				itemID = Integer.parseInt(rs.getString(2));
@@ -222,7 +222,7 @@ public class MakePurchaseUI extends JFrame {
 					itemName = rs.getString(2);
 					currentPrice = Double.parseDouble(rs.getString(3));
 					itemsToPurchase.add(new PurchaseListEntry(itemID, itemName, currentPrice, amountGiven));
-					itemListModel.addElement(String.format("%3s  %25s  $%2.2f %4d",preID, itemName, currentPrice, amountGiven));
+					itemListModel.addElement(String.format("%3s  %25s  $%2.2f %4d",itemID, itemName, currentPrice, amountGiven));
 					if (rs.next()) {
 						new PopupUI("Item collision", "The item ID " + preID + " was found more than once in the database.");
 					}
