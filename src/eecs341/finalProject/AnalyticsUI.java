@@ -49,7 +49,7 @@ public class AnalyticsUI extends JFrame {
 		JButton query5 = new JButton("All Items at this store");
 		JButton query6 = new JButton("All members who shop here");
 		JButton query7 = new JButton("All Prescriptions at this store");
-		JButton query8 = new JButton("Currently Open Stores");
+		JButton query8 = new JButton("Stores with Item in Stock");
 		query1.setBounds(300, 20, 380, 30);
 		frame.add(query1);
 		query2.setBounds(300, 60, 380, 30);
@@ -236,7 +236,7 @@ public class AnalyticsUI extends JFrame {
 					PreparedStatement ps = db.getActiveConnection().prepareStatement("Select S.storeID, S.address "
 							+ "From Stores as S, AmountStocked as q "
 							+ "Where S.storeID = q.storeID and q.itemID = ? and q.quantityStocked > 0 "
-							+ "and ? Between S.openTime And S.clostTime");
+							+ "and ? Between S.openingTime And S.closingTime");
 
 					new ItemSelectUI(AnalyticsUI.this, db, ps);
 				} catch (SQLException e) {
