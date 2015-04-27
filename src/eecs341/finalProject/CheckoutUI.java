@@ -47,7 +47,7 @@ public class CheckoutUI extends JFrame {
 		frame.setTitle("Checkout");
 		JList<String> itemList = new JList<String>(listModel);
 		JTextArea memberLabel = new JTextArea("Member ID: ");
-		JButton createMember = new JButton("Create JMJ");
+		JButton createMember = new JButton("Create Dobis Member");
 		JButton back = new JButton("Back");
 		JButton checkout = new JButton("Checkout");
 		

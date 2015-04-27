@@ -16,7 +16,7 @@ import jdk.nashorn.internal.objects.PrototypeObject;
 
 public class SQLLoader {
 	
-	public static void main(String[] args) {
+	public static void start() {
 		
 		SQLConnection conn;
 		
@@ -28,9 +28,10 @@ public class SQLLoader {
 			e1.printStackTrace();
 		}
 		System.out.println("Data generation system for chain of stores");
-		System.out.println("1 for manufacturers \n 2 for Members \n 3 for products \n 4 for Scripts"
-				+ "\n 5 for Filling locations \n 6 for Amounts Stocked \n"
-				+ "7 for Purchases \n 8 for PurchasedAt \n 9 for ItemsPurchased");
+		System.out.println("Run commands in numerical order in order to preserve dependencies");
+		System.out.println("1 for Supplier \n 2 for AwardsClubMembers \n 3 for Items \n 4 for Prescriptions"
+				+ "\n 5 for FilledAt \n 6 for AmountStocked \n"
+				+ "7 for Purchases \n 8 for PurchasedAt \n 9 for ItemsPurchased \n 10 for PrescriptionFilled");
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String input = "";
 		try {
