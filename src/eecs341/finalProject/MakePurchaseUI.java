@@ -65,6 +65,10 @@ public class MakePurchaseUI extends JFrame {
 		JButton back = new JButton("Back");
 		JButton checkout = new JButton("Checkout...");
 		
+		prescriptionList.setBounds(10, 170, 375, 150);
+		prescriptionList.setFont(new Font("monospaced", Font.PLAIN, 12));
+		prescriptionList.setBorder(BorderFactory.createLineBorder(Color.black));
+		
 		JTextArea prescriptionLabel = new JTextArea("Prescription:");
 		JTextField prescription = new JTextField();
 		prescriptionLabel.setBounds(375, 200, 90, 20);
@@ -79,7 +83,7 @@ public class MakePurchaseUI extends JFrame {
 		itemQuantity.setBounds(375, 100, 90, 20);
 		addItem.setBounds(375, 130, 90, 20);
 		removeItem.setBounds(375, 160, 90, 20);
-		itemList.setBounds(10, 10, 350, 300);
+		itemList.setBounds(10, 10, 350, 150);
 		back.setBounds(10, 320, 120, 50);
 		checkout.setBounds(370, 320, 120, 50);
 		
@@ -204,8 +208,8 @@ public class MakePurchaseUI extends JFrame {
 			int amountGiven;
 			String itemName;
 			double currentPrice;
-			ResultSet rs = db.runQueryString("SELECT prescriptionID, itemID, amountGiven"
-					                       + "FROM Prescription"
+			ResultSet rs = db.runQueryString("SELECT prescriptionID, itemID, amountGiven "
+					                       + "FROM Prescription "
 					                       + "WHERE prescriptionID = " + preID);
 			if (rs.next()) {
 				itemID = Integer.parseInt(rs.getString(2));
@@ -218,7 +222,7 @@ public class MakePurchaseUI extends JFrame {
 					itemName = rs.getString(2);
 					currentPrice = Double.parseDouble(rs.getString(3));
 					itemsToPurchase.add(new PurchaseListEntry(itemID, itemName, currentPrice, amountGiven));
-					itemListModel.addElement(String.format("%3s  %25s  $%2.2f %4d",preID, itemName, currentPrice, amountGiven));
+					itemListModel.addElement(String.format("%3s  %25s  $%2.2f %4d",itemID, itemName, currentPrice, amountGiven));
 					if (rs.next()) {
 						new PopupUI("Item collision", "The item ID " + preID + " was found more than once in the database.");
 					}
