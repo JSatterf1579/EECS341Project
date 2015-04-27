@@ -63,16 +63,16 @@ public class MakePurchaseUI extends JFrame {
 		JButton back = new JButton("Back");
 		JButton checkout = new JButton("Checkout...");
 		
-		itemlabel.setBounds(300, 10, 90, 20);
-		item.setBounds(300, 40, 90, 20);
-		itemQuantityLabel.setBounds(300, 70, 90, 20);
-		itemQuantity.setBounds(300, 100, 90, 20);
-		addItem.setBounds(300, 130, 90, 20);
-		removeItem.setBounds(300, 160, 90, 20);
-		itemList.setBounds(10, 10, 280, 300);
-		addPrescription.setBounds(155, 320, 90, 50);
-		back.setBounds(10, 320, 90, 50);
-		checkout.setBounds(300, 320, 90, 50);
+		itemlabel.setBounds(375, 10, 90, 20);
+		item.setBounds(375, 40, 90, 20);
+		itemQuantityLabel.setBounds(375, 70, 90, 20);
+		itemQuantity.setBounds(375, 100, 90, 20);
+		addItem.setBounds(375, 130, 90, 20);
+		removeItem.setBounds(375, 160, 90, 20);
+		itemList.setBounds(10, 10, 350, 300);
+		addPrescription.setBounds(190, 320, 120, 50);
+		back.setBounds(10, 320, 120, 50);
+		checkout.setBounds(370, 320, 120, 50);
 		
 		itemList.setFont(new Font("monospaced", Font.PLAIN, 12));
 		itemList.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -90,7 +90,7 @@ public class MakePurchaseUI extends JFrame {
 		frame.add(addPrescription);
 		frame.add(back);
 		frame.add(checkout);
-		frame.setSize(400, 400);
+		frame.setSize(500, 400);
 		frame.setResizable(true);
 		frame.setLocationRelativeTo(null);
 		frame.getContentPane().setBackground(Color.white);

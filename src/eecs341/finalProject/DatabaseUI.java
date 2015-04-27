@@ -16,6 +16,7 @@ public class DatabaseUI extends JFrame {
 	
 	public DatabaseUI() {
 		db = new SQLConnection(DBInfo.server, DBInfo.port, DBInfo.database, DBInfo.account, DBInfo.password);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {

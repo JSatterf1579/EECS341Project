@@ -26,7 +26,7 @@ public class MakeMemberUI extends JFrame {
 	
 	private void launchDisplay() {
 		frame.getContentPane().setLayout(null);
-		frame.setTitle("Add Prescription");
+		frame.setTitle("Make Dobis Member");
 		JTextArea nameLabel = new JTextArea("Name:");
 		JTextField nameField = new JTextField();
 		JTextArea addressLabel = new JTextArea("Address:");

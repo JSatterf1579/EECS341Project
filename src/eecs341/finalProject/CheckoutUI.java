@@ -51,14 +51,15 @@ public class CheckoutUI extends JFrame {
 		JButton back = new JButton("Back");
 		JButton checkout = new JButton("Checkout");
 		
-		memberLabel.setBounds(200, 10, 90, 20);
-		memberField.setBounds(200, 40, 90, 20);
-		createMember.setBounds(200, 100, 90, 20);
-		itemList.setBounds(10, 10, 180, 300);
+		memberLabel.setBounds(10, 10, 90, 20);
+		memberField.setBounds(150, 10, 90, 20);
+		createMember.setBounds(300, 10, 90, 20);
+		itemList.setBounds(10, 40, 380, 280);
 		back.setBounds(10, 320, 90, 50);
-		checkout.setBounds(200, 320, 90, 50);
+		checkout.setBounds(300, 320, 90, 50);
 		
 		itemList.setFont(new Font("monospaced", Font.PLAIN, 12));
+		itemList.setBorder(BorderFactory.createLineBorder(Color.black));
 		itemList.addListSelectionListener(null);
 		
 		memberLabel.setEditable(false);
@@ -69,7 +70,7 @@ public class CheckoutUI extends JFrame {
 		frame.add(itemList);
 		frame.add(back);
 		frame.add(checkout);
-		frame.setSize(300, 400);
+		frame.setSize(400, 400);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.getContentPane().setBackground(Color.white);
