@@ -217,7 +217,7 @@ public class MakePurchaseUI extends JFrame {
 				if (rs.next()) {
 					new PopupUI("Prescription collision", "The prescription ID " + preID + " was found more than once in the database.");
 				}
-				rs = db.runQueryString("SELECT itemID, name, currentPrice FROM Items WHERE itemID = " + preID);
+				rs = db.runQueryString("SELECT itemID, name, currentPrice FROM Items WHERE itemID = " + itemID);
 				if (rs.next()) {
 					itemName = rs.getString(2);
 					currentPrice = Double.parseDouble(rs.getString(3));
