@@ -49,7 +49,7 @@ public class AnalyticsUI extends JFrame {
 		JButton query5 = new JButton("All Items at this store");
 		JButton query6 = new JButton("All members who shop here");
 		JButton query7 = new JButton("All Prescriptions at this store");
-		JButton query8 = new JButton("Stores with Item in Stock");
+		JButton query8 = new JButton("Currently Open Stores with an Item in stock");
 		query1.setBounds(300, 20, 380, 30);
 		frame.add(query1);
 		query2.setBounds(300, 60, 380, 30);
