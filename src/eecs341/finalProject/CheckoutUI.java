@@ -50,10 +50,13 @@ public class CheckoutUI extends JFrame {
 		JButton createMember = new JButton("Create Dobis Member");
 		JButton back = new JButton("Back");
 		JButton checkout = new JButton("Checkout");
+		JComboBox<String> dropDown = new JComboBox<String>(new String[]{"Credit", "Cash", "Check"});
+		dropDown.setBounds(110, 320, 180, 50);
+		frame.add(dropDown);
 		
 		memberLabel.setBounds(10, 10, 90, 20);
 		memberField.setBounds(150, 10, 90, 20);
-		createMember.setBounds(300, 10, 90, 20);
+		createMember.setBounds(260, 10, 130, 20);
 		itemList.setBounds(10, 40, 380, 280);
 		back.setBounds(10, 320, 90, 50);
 		checkout.setBounds(300, 320, 90, 50);
