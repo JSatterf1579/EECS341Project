@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -22,7 +23,8 @@ public class MakePurchaseUI extends JFrame {
 	protected DefaultListModel<String> itemListModel;
 	protected SQLConnection db;
 	private JFrame parent;
-	private ArrayList<Integer> prescriptionIDs;
+	private List<Integer> prescriptionIDs;
+	private List<PurchaseListEntry> itemsToPurchase;
 	private int storeID;
 	
 	public MakePurchaseUI(JFrame parent, SQLConnection db, int storeID) {
@@ -31,6 +33,7 @@ public class MakePurchaseUI extends JFrame {
 		this.db = db;
 		this.storeID = storeID;
 		prescriptionIDs = new ArrayList<Integer>();
+		itemsToPurchase = new ArrayList<>();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -52,6 +55,8 @@ public class MakePurchaseUI extends JFrame {
 		JList<String> itemList = new JList<String>(itemListModel);
 		JTextField item = new JTextField();
 		JTextArea itemlabel = new JTextArea("Item ID: ");
+		JTextField itemQuantity = new JTextField();
+		JTextArea itemQuantityLabel = new JTextArea("Quantity: ");
 		JButton addItem = new JButton("Add Item");
 		JButton removeItem = new JButton("Remove Item");
 		JButton addPrescription = new JButton("Prescription");
@@ -60,8 +65,10 @@ public class MakePurchaseUI extends JFrame {
 		
 		itemlabel.setBounds(300, 10, 90, 20);
 		item.setBounds(300, 40, 90, 20);
-		addItem.setBounds(300, 70, 90, 20);
-		removeItem.setBounds(300, 100, 90, 20);
+		itemQuantityLabel.setBounds(300, 70, 90, 20);
+		itemQuantity.setBounds(300, 100, 90, 20);
+		addItem.setBounds(300, 130, 90, 20);
+		removeItem.setBounds(300, 160, 90, 20);
 		itemList.setBounds(10, 10, 280, 300);
 		addPrescription.setBounds(155, 320, 90, 50);
 		back.setBounds(10, 320, 90, 50);
@@ -71,10 +78,13 @@ public class MakePurchaseUI extends JFrame {
 		itemList.setBorder(BorderFactory.createLineBorder(Color.black));
 		
 		itemlabel.setEditable(false);
+		itemQuantityLabel.setEditable(false);
 		
 		frame.add(item);
 		frame.add(itemlabel);
 		frame.add(addItem);
+		frame.add(itemQuantityLabel);
+		frame.add(itemQuantity);
 		frame.add(removeItem);
 		frame.add(itemList);
 		frame.add(addPrescription);
@@ -89,6 +99,7 @@ public class MakePurchaseUI extends JFrame {
 		addItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				int itemID;
+				int itemQuant;
 				try {
 					itemID = Integer.parseInt(item.getText());
 				} catch (NumberFormatException e) {
@@ -97,7 +108,15 @@ public class MakePurchaseUI extends JFrame {
 				} finally {
 					item.setText("");
 				}
-				callbackAddItem(itemID);
+				try {
+					itemQuant = Integer.parseInt(itemQuantity.getText());
+				} catch (NumberFormatException e) {
+					new PopupUI("Bad Quantity", "The quantity specified must be a whole number");
+					return;
+				} finally {
+					itemQuantity.setText("");
+				}
+				callbackAddItem(itemID, itemQuant);
 			}
 		});
 		
@@ -107,6 +126,7 @@ public class MakePurchaseUI extends JFrame {
 				if (index < 0) {
 					new PopupUI("No item selected", "You must select an item to remove it from the purchase");
 				} else {
+					itemsToPurchase.remove(index);
 					itemListModel.remove(index);
 				}
 			}
@@ -120,7 +140,7 @@ public class MakePurchaseUI extends JFrame {
 		
 		checkout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new CheckoutUI(MakePurchaseUI.this, db, itemListModel, prescriptionIDs, storeID);
+				new CheckoutUI(MakePurchaseUI.this, db, itemListModel, prescriptionIDs, itemsToPurchase, storeID);
 			}
 		});
 		
@@ -131,15 +151,16 @@ public class MakePurchaseUI extends JFrame {
 		});
 	}
 	
-	public void callbackAddItem(int itemID) {
+	public void callbackAddItem(int itemID, int itemQuant) {
 		try {
 			String itemName;
 			double currentPrice;
 			ResultSet rs = db.runQueryString("SELECT itemID, name, currentPrice FROM Items WHERE itemID = " + itemID);
 			if (rs.next()) {
+				itemsToPurchase.add(new PurchaseListEntry(itemID, rs.getString(2), Double.parseDouble(rs.getString(3)), itemQuant));
 				itemName = rs.getString(2);
 				currentPrice = Double.parseDouble(rs.getString(3));
-				itemListModel.addElement(String.format("%3s  %25s  $%2.2f",itemID, itemName, currentPrice));
+				itemListModel.addElement(String.format("%3s  %25s  $%2.2f %4d",itemID, itemName, currentPrice, itemQuant));
 				if (rs.next()) {
 					new PopupUI("Item collision", "The item ID you entered, " + itemID + ", was found more than once in the database.");
 				}
@@ -162,7 +183,7 @@ public class MakePurchaseUI extends JFrame {
 			if (rs.next()) {
 				prescriptionIDs.add(prescriptionID);
 				int itemID = Integer.parseInt(rs.getString(2));
-				callbackAddItem(itemID);
+				callbackAddItem(itemID, 1);
 				if (rs.next()) {
 					new PopupUI("Prescription collision", "The prescription ID " + prescriptionID + " was found more than once in the database.");
 				}

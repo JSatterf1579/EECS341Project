@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -18,14 +19,16 @@ public class CheckoutUI extends JFrame {
 	private JTextField memberField = new JTextField();
 	private JFrame parent;
 	private SQLConnection db;
-	private ArrayList<Integer> prescriptionIDs;
+	private List<Integer> prescriptionIDs;
+	private List<PurchaseListEntry> itemsToBuy;
 	private int storeID;
 
-	public CheckoutUI(JFrame parent, SQLConnection db, DefaultListModel<String> listModel, ArrayList<Integer> prescriptionIDs, int storeID) {
+	public CheckoutUI(JFrame parent, SQLConnection db, DefaultListModel<String> listModel, List<Integer> prescriptionIDs, List<PurchaseListEntry> items, int storeID) {
 		this.parent = parent;
 		this.db = db;
 		this.listModel = listModel;
 		this.prescriptionIDs = prescriptionIDs;
+		this.itemsToBuy = items;
 		this.storeID = storeID;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -81,6 +84,7 @@ public class CheckoutUI extends JFrame {
 		
 		checkout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				//String insertPurchase
 				boolean transactionSuccessful = true;
 				Connection con = null;
 				Savepoint rollback = null;
@@ -90,11 +94,11 @@ public class CheckoutUI extends JFrame {
 					con = db.getActiveConnection();
 					rollback = con.setSavepoint();
 					db.getActiveConnection().setAutoCommit(false);
-					int purchaseID = db.runUpdateString("INSERT INTO Purchase (purchaseDate, amountCharged, paymentType, memberID)"
-						           	                  + "VALUES ('2011-04-12T00:00:00.000', -999, 'dummy_pmt_type', " + memberID + ")");
+/*					int purchaseID = db.runUpdateString("INSERT INTO Purchase (purchaseDate, amountCharged, paymentType, memberID)"
+						           	                  + "VALUES ('2011-04-12T00:00:00.000', -999, 'dummy_pmt_type', " + memberID + ")");*/
 					for (int prescriptionID : prescriptionIDs) {
-						db.runUpdateString("INSERT INTO PrescriptionFilled (purchaseID, prescriptionID)"
-	         	                         + "VALUES (" + purchaseID + ", " + prescriptionID + ")");
+/*						db.runUpdateString("INSERT INTO PrescriptionFilled (purchaseID, prescriptionID)"
+	         	                         + "VALUES (" + purchaseID + ", " + prescriptionID + ")");*/
 					}
 					if(transactionSuccessful) {
 						con.commit();
